@@ -1,144 +1,179 @@
 <!DOCTYPE html>
-<html lang="fr" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Massar Driver – Montrez votre bus aux passagers</title>
-  <meta name="description" content="Massar Driver : les chauffeurs de bus partagent leur position pendant le service pour que les passagers voient le bus arriver, en temps réel." />
+  <title>Massar Driver – Show your bus to passengers</title>
+  <meta name="description" content="Massar Driver: bus drivers share their position during their shift so passengers see the bus coming, in real time." />
+  <meta name="theme-color" content="#0B7D4D" />
   <meta property="og:title" content="Massar Driver – Show your bus to passengers" />
   <meta property="og:description" content="Bus drivers share their position during their shift so passengers see the bus coming, in real time." />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://yahiaslimani.github.io/massarwebsite/assets/og-driver.png" />
+  <link rel="icon" type="image/png" href="assets/logo-driver-64.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Massar Driver's app theme: the green of its logo, deep green for actions, saffron for live. */
     :root {
-      --green: #0B7D4D; --green-bright: #2AD888; --green-soft: #d1fae5; --green-ink: #065f46;
-      --saffron: #F2A516; --saffron-soft: #FFF3D6;
-      --ink: #0f1e2e; --muted: #4b5563; --line: #e5e7eb; --bg: #f6faf8; --card: #fff;
+      --logo-green: #2AD888; --logo-green-light: #7CF8BF; --deep-green: #0B7D4D; --saffron: #F2A516;
+      --ink: #0E231A; --muted: #56675F; --bg: #F2F8F5; --surface: #FFFFFF; --panel: #E3F4EB; --line: #D5E7DD;
+      --primary: var(--deep-green); --on-primary: #fff; --shadow: 0 12px 40px rgba(14, 35, 26, .10); --radius: 22px;
+      color-scheme: light;
     }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; overflow-x: hidden; }
-    body.rtl { font-family: 'Cairo', system-ui, sans-serif; }
-    a { color: var(--green); }
-    .container { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --ink: #E4F2EA; --muted: #9DB3A7; --bg: #0B1712; --surface: #13241C; --panel: #1A3126; --line: #25402F;
+        --primary: #39DE92; --on-primary: #06301C; --shadow: 0 12px 40px rgba(0, 0, 0, .35);
+        color-scheme: dark;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Readex Pro', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { color: var(--primary); }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
 
-    nav { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 12px; }
-    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-weight: 800; }
-    .brand-mark { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--green-bright), var(--green)); display: grid; place-items: center; color: #fff; }
-    .brand-mark svg { width: 20px; height: 20px; }
-    .langs { display: flex; gap: 4px; }
-    .lang-btn { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 6px 10px; font: inherit; font-size: .85rem; cursor: pointer; color: var(--muted); }
-    .lang-btn.active { background: var(--green); border-color: var(--green); color: #fff; }
+    header.top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+    .top-inner { height: 64px; display: flex; align-items: center; gap: 14px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 1.15rem; }
+    .brand img { width: 36px; height: 36px; }
+    .spacer { flex: 1; }
+    .back { color: var(--muted); text-decoration: none; font-size: .92rem; }
+    .langs { display: flex; background: var(--panel); border-radius: 999px; padding: 3px; }
+    .langs button { border: 0; background: none; font: inherit; font-size: .85rem; color: var(--muted); padding: 5px 11px; border-radius: 999px; cursor: pointer; }
+    .langs button.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+    @media (max-width: 560px) { .back { display: none; } }
 
-    .hero { padding: 56px 0 40px; background: radial-gradient(circle at 20% 0%, #dcfce7 0, transparent 55%), radial-gradient(circle at 90% 20%, #e0f2fe 0, transparent 50%); }
-    .badge { display: inline-flex; align-items: center; gap: 8px; background: var(--green-soft); color: var(--green-ink); font-weight: 700; font-size: .85rem; padding: 6px 14px; border-radius: 999px; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--saffron); box-shadow: 0 0 0 4px rgba(242,165,22,.25); }
-    h1 { font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.12; font-weight: 800; margin: 16px 0 12px; max-width: 760px; }
-    h1 .hl { color: var(--green); }
-    .lead { font-size: 1.1rem; color: var(--muted); max-width: 680px; }
+    .hero { position: relative; overflow: hidden; padding: 52px 0 64px; isolation: isolate; }
+    .hero::before { content: ''; position: absolute; inset: -30% -10% auto; height: 120%; background: radial-gradient(closest-side, color-mix(in srgb, var(--logo-green) 26%, transparent), transparent), radial-gradient(closest-side at 80% 30%, color-mix(in srgb, var(--logo-green-light) 26%, transparent), transparent); z-index: -1; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 44px; align-items: center; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: .9rem; color: var(--muted); }
+    .live-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--saffron); animation: pulse 1.8s infinite; flex: none; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(242,165,22,.55); } 70% { box-shadow: 0 0 0 10px rgba(242,165,22,0); } 100% { box-shadow: 0 0 0 0 rgba(242,165,22,0); } }
+    @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+    h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: 1.15; font-weight: 700; margin: 18px 0 14px; }
+    h1 .accent { background: linear-gradient(90deg, var(--deep-green), #16A96A); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    @media (prefers-color-scheme: dark) { h1 .accent { background: linear-gradient(90deg, #39DE92, var(--logo-green-light)); -webkit-background-clip: text; background-clip: text; } }
+    .lead { font-size: 1.12rem; color: var(--muted); max-width: 560px; }
 
-    .invite { margin-top: 24px; background: var(--card); border: 2px dashed var(--green-bright); border-radius: 18px; padding: 18px 20px; max-width: 560px; display: none; }
+    .invite { margin-top: 24px; background: var(--surface); border: 2px dashed var(--logo-green); border-radius: 20px; padding: 16px 20px; max-width: 520px; display: none; }
     .invite.show { display: block; }
-    .invite-code { font-size: 2rem; font-weight: 800; letter-spacing: .25em; direction: ltr; unicode-bidi: isolate; color: var(--green); }
+    .invite-code { font-size: 2rem; font-weight: 700; letter-spacing: .25em; direction: ltr; unicode-bidi: isolate; color: var(--primary); }
     .invite small { color: var(--muted); display: block; margin-top: 4px; }
 
     .get { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-    .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--green); color: #fff; text-decoration: none; font-weight: 700; padding: 13px 20px; border-radius: 14px; }
-    .btn.secondary { background: #fff; color: var(--green); border: 1px solid var(--green); }
-    .soon { color: var(--muted); font-size: .95rem; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--primary); color: var(--on-primary); text-decoration: none; font-weight: 600; padding: 12px 20px; border-radius: 999px; }
+    .btn.secondary { background: var(--surface); color: var(--primary); border: 1px solid var(--primary); }
+    .soon { color: var(--muted); font-size: .95rem; width: 100%; }
 
-    section { padding: 48px 0; }
-    h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 800; margin-bottom: 8px; }
-    .sub { color: var(--muted); margin-bottom: 24px; max-width: 680px; }
-    .steps, .perks { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
-    .num { width: 34px; height: 34px; border-radius: 50%; background: var(--green-soft); color: var(--green-ink); font-weight: 800; display: grid; place-items: center; margin-bottom: 10px; }
-    .card h3 { font-size: 1.05rem; margin-bottom: 6px; }
-    .card p { color: var(--muted); font-size: .95rem; }
-    .emoji { font-size: 1.6rem; margin-bottom: 8px; }
+    .phone-wrap { justify-self: center; width: min(300px, 76vw); }
+    .phone { border-radius: 42px; padding: 10px; background: #0E231A; box-shadow: var(--shadow), 0 0 0 1px var(--line); }
+    .phone img { border-radius: 32px; width: 100%; height: auto; aspect-ratio: 393 / 739; object-fit: cover; object-position: top; background: var(--panel); }
+    .caption { text-align: center; color: var(--muted); font-size: .85rem; margin-top: 10px; }
+    @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } }
 
-    .privacy { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .privacy ul { list-style: none; display: grid; gap: 10px; margin: 8px 0 16px; }
+    section { padding: 64px 0; }
+    .section-head { text-align: center; max-width: 660px; margin: 0 auto 40px; }
+    h2 { font-size: clamp(1.6rem, 3.4vw, 2.3rem); line-height: 1.25; font-weight: 700; margin-bottom: 8px; }
+    .section-head p { color: var(--muted); }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: step; }
+    .step { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 22px 22px; }
+    .step::before { counter-increment: step; content: counter(step); position: absolute; top: -16px; inset-inline-start: 22px; width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: var(--on-primary); display: grid; place-items: center; font-weight: 700; }
+    .step h3 { font-size: 1.1rem; margin: 6px 0; }
+    .step p, .card p { color: var(--muted); font-size: .95rem; }
+    @media (max-width: 760px) { .steps { grid-template-columns: 1fr; gap: 26px; } }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+    .icon { width: 46px; height: 46px; border-radius: 50%; background: var(--panel); display: grid; place-items: center; color: var(--primary); margin-bottom: 14px; }
+    .icon svg { width: 22px; height: 22px; }
+    .card h3 { font-size: 1.08rem; margin-bottom: 6px; }
+
+    .privacy { background: var(--surface); border: 1px solid var(--line); border-radius: 28px; padding: 32px; }
+    .privacy ul { list-style: none; display: grid; gap: 12px; margin: 16px 0 18px; }
     .privacy li { display: flex; gap: 10px; align-items: flex-start; }
-    .privacy li::before { content: '✓'; color: var(--green); font-weight: 800; }
+    .privacy li::before { content: ''; flex: none; width: 22px; height: 22px; margin-top: 2px; border-radius: 50%; background: var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230B7D4D' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center / 14px no-repeat; }
 
-    .note { background: var(--saffron-soft); border-radius: 14px; padding: 14px 16px; color: #7a5200; font-size: .95rem; }
-    footer { padding: 32px 0 48px; color: var(--muted); font-size: .9rem; }
-    footer .links { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 10px; }
-    @media (max-width: 520px) { .nav-inner .brand span { display: none; } .invite-code { font-size: 1.6rem; } }
+    .note { background: var(--panel); border-radius: var(--radius); padding: 18px 20px; color: var(--muted); font-size: .95rem; }
+    footer { padding: 36px 0 52px; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+    .foot { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; align-items: center; }
+    .foot-links { display: flex; flex-wrap: wrap; gap: 18px; }
+    .foot-links a { color: var(--muted); text-decoration: none; }
   </style>
 </head>
 <body>
-<nav>
-  <div class="container nav-inner">
-    <a class="brand" href="index.html">
-      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/><path d="M7 18v2M17 18v2"/></svg></span>
-      <span>Massar Driver</span>
-    </a>
-    <div class="langs">
-      <button class="lang-btn" data-lang="ar">عربي</button>
-      <button class="lang-btn" data-lang="fr">FR</button>
-      <button class="lang-btn" data-lang="en">EN</button>
+<header class="top">
+  <div class="container top-inner">
+    <a class="brand" href="driver.html"><img src="assets/logo-driver.png" alt="" width="36" height="36" />Massar Driver</a>
+    <div class="spacer"></div>
+    <a class="back" href="index.html" data-i18n="forPassengers"></a>
+    <div class="langs" role="group" aria-label="Language">
+      <button data-lang="ar">عربي</button>
+      <button data-lang="fr">FR</button>
+      <button data-lang="en">EN</button>
     </div>
-  </div>
-</nav>
-
-<header class="hero">
-  <div class="container">
-    <span class="badge"><span class="dot"></span><span data-i18n="badge"></span></span>
-    <h1><span data-i18n="title1"></span> <span class="hl" data-i18n="title2"></span></h1>
-    <p class="lead" data-i18n="lead"></p>
-
-    <div class="invite" id="invite">
-      <p data-i18n="invitedBy"></p>
-      <div class="invite-code" id="invite-code"></div>
-      <small data-i18n="invitedHow"></small>
-    </div>
-
-    <div class="get" id="get"></div>
   </div>
 </header>
 
-<section>
-  <div class="container">
-    <h2 data-i18n="howTitle"></h2>
-    <p class="sub" data-i18n="howSub"></p>
-    <div class="steps" id="steps"></div>
-  </div>
-</section>
+<main>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="pill"><span class="live-dot"></span><span data-i18n="badge"></span></span>
+        <h1><span data-i18n="title1"></span> <span class="accent" data-i18n="title2"></span></h1>
+        <p class="lead" data-i18n="lead"></p>
+        <div class="invite" id="invite">
+          <p data-i18n="invitedBy"></p>
+          <div class="invite-code" id="invite-code"></div>
+          <small data-i18n="invitedHow"></small>
+        </div>
+        <div class="get" id="get"></div>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone"><img id="shot" alt="" width="393" height="739" /></div>
+        <p class="caption" data-i18n="caption"></p>
+      </div>
+    </div>
+  </section>
 
-<section>
-  <div class="container">
-    <h2 data-i18n="perksTitle"></h2>
-    <div class="perks" id="perks"></div>
-  </div>
-</section>
+  <section>
+    <div class="container">
+      <div class="section-head"><h2 data-i18n="howTitle"></h2><p data-i18n="howSub"></p></div>
+      <div class="steps" id="steps"></div>
+    </div>
+  </section>
 
-<section class="privacy">
-  <div class="container">
-    <h2 data-i18n="privacyTitle"></h2>
-    <ul id="privacy"></ul>
-    <a href="https://my-transit-api.onrender.com/privacy-policy-driver" target="_blank" rel="noopener noreferrer" data-i18n="privacyLink"></a>
-  </div>
-</section>
+  <section style="padding-top:0">
+    <div class="container">
+      <div class="section-head"><h2 data-i18n="perksTitle"></h2></div>
+      <div class="grid" id="perks"></div>
+    </div>
+  </section>
 
-<section>
-  <div class="container">
-    <p class="note" data-i18n="independent"></p>
-  </div>
-</section>
+  <section style="padding-top:0">
+    <div class="container">
+      <div class="privacy">
+        <h2 data-i18n="privacyTitle"></h2>
+        <ul id="privacy"></ul>
+        <a href="https://my-transit-api.onrender.com/privacy-policy-driver" target="_blank" rel="noopener noreferrer" data-i18n="privacyLink"></a>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="container"><p class="note" data-i18n="independent"></p></div>
+  </section>
+</main>
 
 <footer>
-  <div class="container">
-    <div class="links">
-      <a href="index.html" data-i18n="footerHome"></a>
+  <div class="container foot">
+    <a class="brand" href="index.html"><img src="assets/logo.png" alt="" width="28" height="28" />Massar</a>
+    <div class="foot-links">
+      <a href="index.html" data-i18n="forPassengers"></a>
       <a href="https://my-transit-api.onrender.com/terms-and-conditions" target="_blank" rel="noopener noreferrer" data-i18n="footerTerms"></a>
       <a href="mailto:drivers@massar-dz.com" dir="ltr">drivers@massar-dz.com</a>
     </div>
-    <p data-i18n="footerNote"></p>
   </div>
 </footer>
 
@@ -149,96 +184,56 @@
   const PLAY_URL = 'https://play.google.com/store/apps/details?id=dz.massar_driver.ys';
   const CONTACT = 'drivers@massar-dz.com';
 
+  const ICONS = {
+    eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    invite: '<circle cx="9" cy="8" r="4"/><path d="M2 21c1-4 4-6 7-6s6 2 7 6"/><path d="M19 8v6M16 11h6"/>',
+    free: '<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>',
+  };
+  const svg = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]}</svg>`;
+
   const i18n = {
-    fr: {
-      dir: 'ltr', title: 'Massar Driver – Montrez votre bus aux passagers',
-      badge: 'Pour les chauffeurs de bus', title1: 'Montrez votre bus', title2: 'aux passagers qui l’attendent',
-      lead: "Avec Massar Driver, vous partagez votre position pendant le service. Les passagers de Massar voient votre bus arriver en temps réel, et vous voyez combien vous suivent.",
-      invitedBy: 'Un chauffeur vous a invité. Votre code d’invitation :', invitedHow: 'Saisissez-le à l’inscription dans Massar Driver (il est rempli tout seul si vous installez l’application depuis ce lien).',
-      getPlay: 'Télécharger sur Google Play', getSoon: 'Massar Driver arrive bientôt sur Google Play.', getContact: 'Écrivez-nous pour rejoindre les chauffeurs',
-      howTitle: 'Comment ça marche', howSub: 'Quelques minutes pour commencer, puis un seul bouton.',
-      steps: [
-        ['Inscrivez-vous', 'Choisissez votre ville. L’équipe Massar vérifie chaque nouveau chauffeur avant que son bus soit montré aux passagers.'],
-        ['Choisissez votre ligne', 'Votre ligne et vos horaires de service. Le sens (aller ou retour) est détecté tout seul.'],
-        ['Partagez pendant le service', 'Un bouton Démarrer, ou le démarrage automatique aux heures choisies. Une notification reste visible tant que vous partagez.'],
-      ],
-      perksTitle: 'Ce que vous y gagnez',
-      perks: [
-        ['👀', 'Des passagers qui vous attendent', 'Ils voient votre bus arriver et sont prêts à l’arrêt.'],
-        ['📈', 'Votre activité', 'Combien de passagers vous suivent, vos heures et vos kilomètres du mois.'],
-        ['🤝', 'Invitez vos collègues', 'Partagez votre code : chaque chauffeur de plus aide plus de passagers.'],
-        ['🆓', 'Gratuit', 'Aucun frais, aucun matériel : votre téléphone suffit.'],
-      ],
-      privacyTitle: 'Votre vie privée',
-      privacy: [
-        'Votre position n’est envoyée que pendant que vous partagez, et vous arrêtez quand vous voulez.',
-        'Les passagers voient le bus, pas votre nom ni votre téléphone.',
-        'Aucun historique de vos positions n’est conservé.',
-        'Vos nom, téléphone et plaque ne sont vus que par l’équipe Massar.',
-      ],
-      privacyLink: 'Lire la politique de confidentialité des chauffeurs',
-      independent: "Massar est une application communautaire indépendante, non affiliée à une entité gouvernementale, une autorité municipale ou un opérateur de transport.",
-      footerHome: 'Massar pour les passagers', footerTerms: "Conditions d'utilisation", footerNote: 'Massar – suivi de bus communautaire en Algérie.',
-    },
-    en: {
-      dir: 'ltr', title: 'Massar Driver – Show your bus to passengers',
-      badge: 'For bus drivers', title1: 'Show your bus', title2: 'to the passengers waiting for it',
-      lead: 'With Massar Driver you share your position during your shift. Massar passengers see your bus coming in real time, and you see how many follow you.',
-      invitedBy: 'A driver invited you. Your invitation code:', invitedHow: 'Enter it when you sign up in Massar Driver (it is filled in for you if you install the app from this link).',
-      getPlay: 'Get it on Google Play', getSoon: 'Massar Driver is coming soon to Google Play.', getContact: 'Write to us to join the drivers',
-      howTitle: 'How it works', howSub: 'A few minutes to start, then a single button.',
-      steps: [
-        ['Sign up', "Pick your city. Massar's team checks every new driver before their bus is shown to passengers."],
-        ['Pick your line', 'Your line and your working hours. The direction (outbound or return) is detected by itself.'],
-        ['Share during your shift', 'One Start button, or automatic start at the hours you chose. A notification stays visible while you share.'],
-      ],
-      perksTitle: 'What you get',
-      perks: [
-        ['👀', 'Passengers waiting for you', 'They see your bus coming and are ready at the stop.'],
-        ['📈', 'Your activity', 'How many passengers follow you, your hours and kilometres this month.'],
-        ['🤝', 'Invite colleagues', 'Share your code: every extra driver helps more passengers.'],
-        ['🆓', 'Free', 'No fees, no equipment: your phone is enough.'],
-      ],
-      privacyTitle: 'Your privacy',
-      privacy: [
-        'Your position is sent only while you share, and you stop whenever you want.',
-        'Passengers see the bus, not your name or phone number.',
-        'No history of your positions is kept.',
-        "Your name, phone and plate are seen only by Massar's team.",
-      ],
-      privacyLink: "Read the drivers' privacy policy",
-      independent: 'Massar is an independent, community app, not affiliated with any government entity, municipal authority or transport operator.',
-      footerHome: 'Massar for passengers', footerTerms: 'Terms of use', footerNote: 'Massar – community bus tracking in Algeria.',
-    },
     ar: {
-      dir: 'rtl', title: 'مسار السائق – أظهر حافلتك للركاب',
+      dir: 'rtl', title: 'مسار السائق – أظهر حافلتك للركاب', forPassengers: 'مسار للركاب',
       badge: 'لسائقي الحافلات', title1: 'أظهر حافلتك', title2: 'للركاب الذين ينتظرونها',
       lead: 'مع تطبيق Massar Driver تشارك موقعك أثناء العمل. يرى ركاب مسار حافلتك قادمة مباشرةً، وترى كم منهم يتابعك.',
+      caption: 'من تطبيق Massar Driver: من يتابعك، نشاطك، ودعوة زملائك.',
       invitedBy: 'دعاك سائق. رمز دعوتك:', invitedHow: 'أدخله عند التسجيل في Massar Driver (يُملأ تلقائيًا إن ثبّتّ التطبيق من هذا الرابط).',
-      getPlay: 'حمّله من Google Play', getSoon: 'يصل Massar Driver قريبًا إلى Google Play.', getContact: 'راسلنا للانضمام إلى السائقين',
+      getPlay: 'حمّله من Google Play', getSoon: 'يصل Massar Driver قريبًا إلى Google Play.', getContact: 'راسلنا للانضمام',
       howTitle: 'كيف يعمل', howSub: 'بضع دقائق للبدء، ثم زر واحد.',
-      steps: [
-        ['سجّل', 'اختر مدينتك. يتحقق فريق مسار من كل سائق جديد قبل إظهار حافلته للركاب.'],
-        ['اختر خطك', 'خطك وساعات عملك. يُكتشف الاتجاه (ذهاب أو إياب) تلقائيًا.'],
-        ['شارك أثناء العمل', 'زر «ابدأ» واحد، أو بدء تلقائي في الساعات التي تختارها. يبقى إشعار ظاهرًا طوال المشاركة.'],
-      ],
+      steps: [['سجّل', 'اختر مدينتك. يتحقق فريق مسار من كل سائق جديد قبل إظهار حافلته للركاب.'], ['اختر خطك', 'خطك وساعات عملك. يُكتشف الاتجاه (ذهاب أو إياب) تلقائيًا.'], ['شارك أثناء العمل', 'زر «ابدأ» واحد، أو بدء تلقائي في الساعات التي تختارها. يبقى إشعار ظاهرًا طوال المشاركة.']],
       perksTitle: 'ما الذي تكسبه',
-      perks: [
-        ['👀', 'ركاب ينتظرونك', 'يرون حافلتك قادمة ويكونون مستعدين في المحطة.'],
-        ['📈', 'نشاطك', 'كم راكبًا يتابعك، وساعاتك وكيلومتراتك هذا الشهر.'],
-        ['🤝', 'ادعُ زملاءك', 'شارك رمزك: كل سائق إضافي يساعد مزيدًا من الركاب.'],
-        ['🆓', 'مجاني', 'بلا رسوم ولا أجهزة: هاتفك يكفي.'],
-      ],
-      privacyTitle: 'خصوصيتك',
-      privacy: [
-        'لا يُرسل موقعك إلا أثناء المشاركة، وتوقفها متى شئت.',
-        'يرى الركاب الحافلة، لا اسمك ولا رقم هاتفك.',
-        'لا يُحفظ أي سجل لمواقعك.',
-        'اسمك وهاتفك ولوحة الحافلة لا يراها إلا فريق مسار.',
-      ],
-      privacyLink: 'اقرأ سياسة خصوصية السائقين',
-      independent: 'مسار تطبيق مجتمعي مستقل، لا يتبع أي جهة حكومية أو سلطة بلدية أو مشغّل نقل.',
-      footerHome: 'مسار للركاب', footerTerms: 'شروط الاستخدام', footerNote: 'مسار – تتبع مجتمعي للحافلات في الجزائر.',
+      perks: [['eye', 'ركاب ينتظرونك', 'يرون حافلتك قادمة ويكونون مستعدين في المحطة.'], ['chart', 'نشاطك', 'كم راكبًا يتابعك، وساعاتك وكيلومتراتك هذا الشهر.'], ['invite', 'ادعُ زملاءك', 'شارك رمزك أو رمز QR: كل سائق إضافي يساعد مزيدًا من الركاب.'], ['free', 'مجاني', 'بلا رسوم ولا أجهزة: هاتفك يكفي.']],
+      privacyTitle: 'خصوصيتك', privacy: ['لا يُرسل موقعك إلا أثناء المشاركة، وتوقفها متى شئت.', 'يرى الركاب الحافلة، لا اسمك ولا رقم هاتفك.', 'لا يُحفظ أي سجل لمواقعك.', 'اسمك وهاتفك ولوحة الحافلة لا يراها إلا فريق مسار.'],
+      privacyLink: 'اقرأ سياسة خصوصية السائقين', independent: 'مسار تطبيق مجتمعي مستقل، لا يتبع أي جهة حكومية أو سلطة بلدية أو مشغّل نقل.', footerTerms: 'شروط الاستخدام',
+    },
+    fr: {
+      dir: 'ltr', title: 'Massar Driver – Montrez votre bus aux passagers', forPassengers: 'Massar pour les passagers',
+      badge: 'Pour les chauffeurs de bus', title1: 'Montrez votre bus', title2: "aux passagers qui l'attendent",
+      lead: 'Avec Massar Driver, vous partagez votre position pendant le service. Les passagers de Massar voient votre bus arriver en temps réel, et vous voyez combien vous suivent.',
+      caption: 'Dans Massar Driver : qui vous suit, votre activité, inviter vos collègues.',
+      invitedBy: "Un chauffeur vous a invité. Votre code d'invitation :", invitedHow: "Saisissez-le à l'inscription dans Massar Driver (il est rempli tout seul si vous installez l'application depuis ce lien).",
+      getPlay: 'Télécharger sur Google Play', getSoon: 'Massar Driver arrive bientôt sur Google Play.', getContact: 'Écrivez-nous pour rejoindre',
+      howTitle: 'Comment ça marche', howSub: 'Quelques minutes pour commencer, puis un seul bouton.',
+      steps: [['Inscrivez-vous', "Choisissez votre ville. L'équipe Massar vérifie chaque nouveau chauffeur avant que son bus soit montré aux passagers."], ['Choisissez votre ligne', 'Votre ligne et vos horaires de service. Le sens (aller ou retour) est détecté tout seul.'], ['Partagez pendant le service', 'Un bouton Démarrer, ou le démarrage automatique aux heures choisies. Une notification reste visible tant que vous partagez.']],
+      perksTitle: 'Ce que vous y gagnez',
+      perks: [['eye', 'Des passagers qui vous attendent', "Ils voient votre bus arriver et sont prêts à l'arrêt."], ['chart', 'Votre activité', 'Combien de passagers vous suivent, vos heures et vos kilomètres du mois.'], ['invite', 'Invitez vos collègues', 'Partagez votre code ou son QR code : chaque chauffeur de plus aide plus de passagers.'], ['free', 'Gratuit', 'Aucun frais, aucun matériel : votre téléphone suffit.']],
+      privacyTitle: 'Votre vie privée', privacy: ["Votre position n'est envoyée que pendant que vous partagez, et vous arrêtez quand vous voulez.", 'Les passagers voient le bus, pas votre nom ni votre téléphone.', "Aucun historique de vos positions n'est conservé.", "Vos nom, téléphone et plaque ne sont vus que par l'équipe Massar."],
+      privacyLink: 'Lire la politique de confidentialité des chauffeurs', independent: 'Massar est une application communautaire indépendante, non affiliée à une entité gouvernementale, une autorité municipale ou un opérateur de transport.', footerTerms: "Conditions d'utilisation",
+    },
+    en: {
+      dir: 'ltr', title: 'Massar Driver – Show your bus to passengers', forPassengers: 'Massar for passengers',
+      badge: 'For bus drivers', title1: 'Show your bus', title2: 'to the passengers waiting for it',
+      lead: 'With Massar Driver you share your position during your shift. Massar passengers see your bus coming in real time, and you see how many follow you.',
+      caption: 'In Massar Driver: who follows you, your activity, inviting colleagues.',
+      invitedBy: 'A driver invited you. Your invitation code:', invitedHow: 'Enter it when you sign up in Massar Driver (it is filled in for you if you install the app from this link).',
+      getPlay: 'Get it on Google Play', getSoon: 'Massar Driver is coming soon to Google Play.', getContact: 'Write to us to join',
+      howTitle: 'How it works', howSub: 'A few minutes to start, then a single button.',
+      steps: [['Sign up', "Pick your city. Massar's team checks every new driver before their bus is shown to passengers."], ['Pick your line', 'Your line and your working hours. The direction (outbound or return) is detected by itself.'], ['Share during your shift', 'One Start button, or automatic start at the hours you chose. A notification stays visible while you share.']],
+      perksTitle: 'What you get',
+      perks: [['eye', 'Passengers waiting for you', 'They see your bus coming and are ready at the stop.'], ['chart', 'Your activity', 'How many passengers follow you, your hours and kilometres this month.'], ['invite', 'Invite colleagues', 'Share your code or its QR code: every extra driver helps more passengers.'], ['free', 'Free', 'No fees, no equipment: your phone is enough.']],
+      privacyTitle: 'Your privacy', privacy: ['Your position is sent only while you share, and you stop whenever you want.', 'Passengers see the bus, not your name or phone number.', 'No history of your positions is kept.', "Your name, phone and plate are seen only by Massar's team."],
+      privacyLink: "Read the drivers' privacy policy", independent: 'Massar is an independent, community app, not affiliated with any government entity, municipal authority or transport operator.', footerTerms: 'Terms of use',
     },
   };
 
@@ -246,46 +241,42 @@
   // Invitation codes: 6–12 characters without look-alikes (as the app generates them).
   const rawCode = (params.get('code') || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
   const code = /^[2-9A-HJKMNP-Z]{6,12}$/.test(rawCode) ? rawCode : null;
-
-  const esc = (text) => text.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const esc = (t) => t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
   function apply(lang) {
-    const t = i18n[lang] || i18n.fr;
+    const t = i18n[lang] || i18n.ar;
     document.documentElement.lang = lang;
     document.documentElement.dir = t.dir;
-    document.body.classList.toggle('rtl', t.dir === 'rtl');
     document.title = t.title;
     document.querySelectorAll('[data-i18n]').forEach((el) => {
-      const value = t[el.getAttribute('data-i18n')];
-      if (typeof value === 'string') el.textContent = value;
+      const v = t[el.dataset.i18n];
+      if (typeof v === 'string') el.textContent = v;
     });
-    document.querySelectorAll('.lang-btn').forEach((b) => b.classList.toggle('active', b.dataset.lang === lang));
-    document.getElementById('steps').innerHTML = t.steps.map(([h, p], i) =>
-      `<div class="card"><div class="num">${i + 1}</div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
-    document.getElementById('perks').innerHTML = t.perks.map(([e, h, p]) =>
-      `<div class="card"><div class="emoji">${e}</div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
+    document.querySelectorAll('.langs button').forEach((b) => b.classList.toggle('active', b.dataset.lang === lang));
+    document.getElementById('shot').src = `assets/screens/driver-${lang}.webp`;
+    document.getElementById('steps').innerHTML = t.steps.map(([h, p]) => `<div class="step"><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
+    document.getElementById('perks').innerHTML = t.perks.map(([i, h, p]) => `<div class="card"><div class="icon">${svg(i)}</div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
     document.getElementById('privacy').innerHTML = t.privacy.map((p) => `<li>${esc(p)}</li>`).join('');
-
     const get = document.getElementById('get');
     if (PLAY_PUBLISHED) {
-      const url = PLAY_URL + (code ? '&referrer=' + encodeURIComponent('code=' + code) : '');
-      get.innerHTML = `<a class="btn" href="${url}" target="_blank" rel="noopener noreferrer">▶ ${esc(t.getPlay)}</a>`;
+      const url = PLAY_URL + `&hl=${lang}` + (code ? '&referrer=' + encodeURIComponent('code=' + code) : '');
+      get.innerHTML = `<a class="btn" href="${url}" target="_blank" rel="noopener noreferrer">${esc(t.getPlay)}</a>`;
     } else {
       const subject = encodeURIComponent('Massar Driver' + (code ? ' (' + code + ')' : ''));
-      get.innerHTML = `<span class="soon">${esc(t.getSoon)}</span><a class="btn secondary" href="mailto:${CONTACT}?subject=${subject}">✉ ${esc(t.getContact)}</a>`;
+      get.innerHTML = `<a class="btn" href="mailto:${CONTACT}?subject=${subject}">${esc(t.getContact)}</a><span class="soon">${esc(t.getSoon)}</span>`;
     }
-    try { localStorage.setItem('massar_driver_lang', lang); } catch (_) {}
+    try { localStorage.setItem('massar_lang', lang); } catch (_) {}
   }
 
   if (code) {
     document.getElementById('invite').classList.add('show');
     document.getElementById('invite-code').textContent = code;
   }
-  document.querySelectorAll('.lang-btn').forEach((b) => b.addEventListener('click', () => apply(b.dataset.lang)));
+  document.querySelectorAll('.langs button').forEach((b) => b.addEventListener('click', () => apply(b.dataset.lang)));
   let saved = null;
-  try { saved = localStorage.getItem('massar_driver_lang'); } catch (_) {}
-  const browser = (navigator.language || 'fr').slice(0, 2);
-  apply(params.get('lang') || saved || (i18n[browser] ? browser : 'fr'));
+  try { saved = localStorage.getItem('massar_lang'); } catch (_) {}
+  const browser = (navigator.language || 'ar').slice(0, 2);
+  apply([params.get('lang'), saved, browser].find((l) => l && i18n[l]) || 'ar');
 </script>
 </body>
 </html>

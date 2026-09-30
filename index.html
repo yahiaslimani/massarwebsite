@@ -1,1196 +1,524 @@
 <!DOCTYPE html>
-<html lang="fr" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Massar – Suivi de bus en temps réel en Algérie</title>
-  <meta name="description" content="Massar est une application communautaire qui permet aux passagers algériens de suivre les bus en temps réel, réduire l'attente et planifier leurs trajets." />
-  <meta property="og:title" content="Massar – Real-Time Bus Tracker for Algeria" />
-  <meta property="og:description" content="Community-powered real-time bus tracking for Algerian commuters." />
+  <title>Massar – Your bus, live</title>
+  <meta name="description" content="Massar shows the buses of your city live on the map: arrival times, trips with transfers, alerts. Free, no account, in Arabic, French and English." />
+  <meta name="theme-color" content="#1673C7" />
+  <meta property="og:title" content="Massar – Your bus, live" />
+  <meta property="og:description" content="Live buses, arrival times and trips with transfers. Free, no account, in Arabic, French and English." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://massar-dz.com" />
+  <meta property="og:image" content="https://yahiaslimani.github.io/massarwebsite/assets/og.png" />
+  <link rel="icon" type="image/png" href="assets/logo-64.png" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    /* Massar's app theme: logo blue, deep blue for actions, saffron for live data, Readex Pro. */
     :root {
-      --blue-50: #eff6ff;
-      --blue-100: #dbeafe;
-      --blue-200: #bfdbfe;
-      --blue-400: #60a5fa;
-      --blue-500: #3b82f6;
-      --blue-600: #2563eb;
-      --blue-700: #1d4ed8;
-      --sky-50: #f0f9ff;
-      --sky-500: #0ea5e9;
-      --gray-50: #f9fafb;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-400: #9ca3af;
-      --gray-500: #6b7280;
-      --gray-600: #4b5563;
-      --gray-700: #374151;
-      --gray-800: #1f2937;
-      --gray-900: #111827;
-      --green-100: #dcfce7;
-      --green-600: #16a34a;
-      --green-700: #15803d;
-      --amber-50: #fffbeb;
-      --amber-200: #fde68a;
-      --amber-700: #b45309;
-      --amber-800: #92400e;
+      --logo-blue: #42A3F0; --logo-blue-light: #98CDF7; --deep-blue: #1673C7; --saffron: #F2A516; --saffron-text: #B87708;
+      --ink: #0F1E2E; --muted: #5B6B7B; --bg: #F3F7FB; --surface: #FFFFFF; --panel: #EAF2FA; --line: #DCE6EF;
+      --primary: var(--deep-blue); --on-primary: #fff; --shadow: 0 12px 40px rgba(15, 30, 46, .10); --radius: 22px;
+      color-scheme: light;
     }
-
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --ink: #E6EDF3; --muted: #93A3B3; --bg: #0B1420; --surface: #142130; --panel: #1A2A3C; --line: #243548;
+        --primary: #5CB0F2; --on-primary: #06223A; --saffron-text: #F5B53A; --shadow: 0 12px 40px rgba(0, 0, 0, .35);
+        color-scheme: dark;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
+    body { font-family: 'Readex Pro', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { color: var(--primary); }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
 
-    /* Drivers section and "more soon" city tag */
-    .drivers-section { padding: 64px 0; background: linear-gradient(135deg, #ecfdf5, #eff6ff); }
-    .drivers-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-    .drivers-inner h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; color: var(--gray-900); margin: 8px 0; }
-    .drivers-inner p { color: var(--gray-600); max-width: 640px; }
-    .drivers-badge { display: inline-block; background: #d1fae5; color: #065f46; font-weight: 700; font-size: .8rem; padding: 4px 12px; border-radius: 999px; }
-    .drivers-cta { white-space: nowrap; }
-    .city-tag-soon { opacity: .7; border-style: dashed; }
+    /* --- Header --- */
+    header.top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+    .top-inner { height: 64px; display: flex; align-items: center; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 1.2rem; }
+    .brand img { width: 36px; height: 36px; }
+    .top nav { display: flex; gap: 20px; margin-inline-start: 12px; }
+    .top nav a { color: var(--muted); text-decoration: none; font-size: .95rem; }
+    .top nav a:hover { color: var(--ink); }
+    .spacer { flex: 1; }
+    .langs { display: flex; background: var(--panel); border-radius: 999px; padding: 3px; }
+    .langs button { border: 0; background: none; font: inherit; font-size: .85rem; color: var(--muted); padding: 5px 11px; border-radius: 999px; cursor: pointer; }
+    .langs button.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--primary); color: var(--on-primary); text-decoration: none; font-weight: 600; padding: 11px 20px; border-radius: 999px; border: 0; font-family: inherit; font-size: .95rem; white-space: nowrap; }
+    .btn:hover { filter: brightness(1.08); }
+    .btn-sm { padding: 8px 16px; font-size: .9rem; }
+    @media (max-width: 860px) { .top nav { display: none; } }
+    @media (max-width: 480px) { .top .btn-sm { display: none; } }
 
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: #fff;
-      color: var(--gray-900);
-      overflow-x: hidden;
-      line-height: 1.5;
-    }
+    /* --- Hero --- */
+    .hero { position: relative; overflow: hidden; padding: 56px 0 72px; isolation: isolate; }
+    .hero::before { content: ''; position: absolute; inset: -30% -10% auto; height: 120%; background: radial-gradient(closest-side, color-mix(in srgb, var(--logo-blue) 28%, transparent), transparent), radial-gradient(closest-side at 80% 30%, color-mix(in srgb, var(--logo-blue-light) 30%, transparent), transparent); z-index: -1; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: .9rem; color: var(--muted); }
+    .live-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--saffron); animation: pulse 1.8s infinite; flex: none; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(242,165,22,.55); } 70% { box-shadow: 0 0 0 10px rgba(242,165,22,0); } 100% { box-shadow: 0 0 0 0 rgba(242,165,22,0); } }
+    @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+    h1 { font-size: clamp(2.3rem, 5.5vw, 3.8rem); line-height: 1.15; font-weight: 700; margin: 18px 0 16px; }
+    h1 .accent { background: linear-gradient(90deg, var(--deep-blue), var(--logo-blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    @media (prefers-color-scheme: dark) { h1 .accent { background: linear-gradient(90deg, #5CB0F2, var(--logo-blue-light)); -webkit-background-clip: text; background-clip: text; } }
+    .lead { font-size: 1.15rem; color: var(--muted); max-width: 560px; }
+    .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 28px; }
+    .play { display: inline-flex; align-items: center; gap: 12px; background: #0F1E2E; color: #fff; text-decoration: none; padding: 10px 20px 10px 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,.14); }
+    .play svg { width: 26px; height: 26px; flex: none; }
+    .play small { display: block; font-size: .72rem; opacity: .8; line-height: 1.2; }
+    .play strong { display: block; font-size: 1.1rem; line-height: 1.2; font-weight: 600; }
+    .cta-note { color: var(--muted); font-size: .9rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: .88rem; }
+    .chip svg { width: 16px; height: 16px; color: var(--primary); }
 
-    body.rtl {
-      font-family: 'Cairo', system-ui, sans-serif;
-      direction: rtl;
-    }
+    /* --- Phone with a real screenshot --- */
+    .phone-wrap { position: relative; justify-self: center; width: min(320px, 78vw); }
+    .phone { position: relative; border-radius: 42px; padding: 10px; background: #0F1E2E; box-shadow: var(--shadow), 0 0 0 1px var(--line); }
+    .phone img { border-radius: 32px; width: 100%; height: auto; aspect-ratio: 720 / 1354; object-fit: cover; object-position: top; background: var(--panel); }
+    .float { position: absolute; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 10px 14px; display: flex; align-items: center; gap: 10px; font-size: .9rem; white-space: nowrap; }
+    .float .when { color: var(--saffron-text); font-weight: 700; }
+    .float-1 { top: 16%; inset-inline-start: -64px; }
+    .float-2 { bottom: 12%; inset-inline-end: -48px; }
+    @media (max-width: 900px) { .float-1 { inset-inline-start: -12px; } .float-2 { inset-inline-end: -12px; } }
+    .badge { display: inline-grid; place-items: center; min-width: 28px; height: 28px; padding: 0 7px; border-radius: 8px; color: #fff; font-weight: 700; font-size: .9rem; }
+    @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } .phone-wrap { margin-top: 12px; } }
 
-    /* ─── NAV ─── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 50;
-      transition: background .3s, box-shadow .3s;
-      height: 64px;
-    }
-    nav.scrolled {
-      background: rgba(255,255,255,.95);
-      backdrop-filter: blur(8px);
-      box-shadow: 0 1px 3px rgba(0,0,0,.08);
-    }
-    .nav-inner {
-      max-width: 1152px;
-      margin: 0 auto;
-      padding: 0 24px;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-    .logo-icon {
-      width: 36px; height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 2px 8px rgba(37,99,235,.35);
-      flex-shrink: 0;
-    }
-    .logo-icon svg { width: 20px; height: 20px; fill: white; }
-    .logo-text { font-weight: 700; font-size: 1.125rem; color: var(--gray-900); }
+    /* --- Sections --- */
+    section { padding: 72px 0; }
+    .section-head { text-align: center; max-width: 680px; margin: 0 auto 44px; }
+    .eyebrow { color: var(--primary); font-weight: 600; font-size: .9rem; letter-spacing: .04em; }
+    h2 { font-size: clamp(1.7rem, 3.6vw, 2.5rem); line-height: 1.25; font-weight: 700; margin: 6px 0 10px; }
+    .section-head p { color: var(--muted); font-size: 1.05rem; }
 
-    .nav-right { display: flex; align-items: center; gap: 12px; }
+    /* Showcase rows: a screenshot and its story, alternating sides. */
+    .show { display: grid; grid-template-columns: .8fr 1.2fr; gap: 56px; align-items: center; margin-bottom: 72px; }
+    .show:nth-of-type(even) .phone-wrap { order: 2; }
+    .show h3 { font-size: clamp(1.4rem, 2.6vw, 1.9rem); line-height: 1.3; margin: 8px 0 12px; }
+    .show p { color: var(--muted); font-size: 1.05rem; }
+    .show ul { list-style: none; margin-top: 18px; display: grid; gap: 10px; }
+    .show li { display: flex; gap: 10px; align-items: flex-start; }
+    .show li::before { content: ''; flex: none; width: 22px; height: 22px; margin-top: 2px; border-radius: 50%; background: var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231673C7' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center / 14px no-repeat; }
+    @media (max-width: 860px) { .show { grid-template-columns: 1fr; gap: 28px; } .show:nth-of-type(even) .phone-wrap { order: 0; } .show .phone-wrap { width: min(280px, 72vw); } }
 
-    .lang-switcher {
-      display: flex;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      overflow: hidden;
-      font-size: .875rem;
-      font-weight: 500;
-    }
-    .lang-btn {
-      padding: 6px 12px;
-      background: white;
-      color: var(--gray-600);
-      border: none;
-      cursor: pointer;
-      transition: background .15s, color .15s;
-      font-family: inherit;
-      font-size: inherit;
-      font-weight: inherit;
-    }
-    .lang-btn:hover { background: var(--blue-50); color: var(--blue-600); }
-    .lang-btn.active { background: var(--blue-600); color: white; }
+    /* Feature grid: icons in the app's round tinted buttons. */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+    .icon { width: 46px; height: 46px; border-radius: 50%; background: var(--panel); display: grid; place-items: center; color: var(--primary); margin-bottom: 14px; }
+    .icon svg { width: 22px; height: 22px; }
+    .card h3 { font-size: 1.08rem; margin-bottom: 6px; }
+    .card p { color: var(--muted); font-size: .95rem; }
 
-    .nav-site-link {
-      font-size: .875rem;
-      color: var(--gray-600);
-      text-decoration: none;
-      transition: color .2s;
-    }
-    .nav-site-link:hover { color: var(--blue-600); }
-    @media (max-width: 640px) { .nav-site-link { display: none; } }
+    /* How it works */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: step; }
+    .step { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 22px 22px; }
+    .step::before { counter-increment: step; content: counter(step); position: absolute; top: -16px; inset-inline-start: 22px; width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: var(--on-primary); display: grid; place-items: center; font-weight: 700; }
+    .step h3 { font-size: 1.1rem; margin: 6px 0; }
+    .step p { color: var(--muted); font-size: .95rem; }
+    @media (max-width: 760px) { .steps { grid-template-columns: 1fr; gap: 26px; } }
 
-    .btn-primary {
-      background: var(--blue-600);
-      color: white;
-      font-size: .875rem;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background .2s;
-      display: inline-block;
-    }
-    .btn-primary:hover { background: var(--blue-700); }
+    /* Where */
+    .where { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 28px; padding: 28px; }
+    .where > img { width: 132px; }
+    .where h2 { margin-top: 0; }
+    .lines { display: grid; gap: 10px; margin: 16px 0 10px; }
+    .line-row { display: flex; align-items: center; gap: 12px; background: var(--panel); border-radius: 14px; padding: 10px 14px; }
+    .where .note { color: var(--muted); font-size: .95rem; }
+    @media (max-width: 640px) { .where { grid-template-columns: 1fr; } .where > img { width: 96px; } }
 
-    /* ─── HERO ─── */
-    .hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding-top: 64px;
-      overflow: hidden;
-    }
-    .hero-bg {
-      position: absolute; inset: 0; z-index: -1;
-      background: linear-gradient(135deg, var(--blue-50) 0%, var(--sky-50) 50%, white 100%);
-    }
-    .hero-blob-1 {
-      position: absolute; top: 80px; right: 0;
-      width: 512px; height: 512px;
-      background: var(--blue-200);
-      border-radius: 50%;
-      opacity: .18;
-      filter: blur(60px);
-      z-index: -1;
-    }
-    .hero-blob-2 {
-      position: absolute; bottom: 40px; left: 0;
-      width: 256px; height: 256px;
-      background: #bae6fd;
-      border-radius: 50%;
-      opacity: .22;
-      filter: blur(50px);
-      z-index: -1;
-    }
-    .hero-inner {
-      max-width: 1152px;
-      margin: 0 auto;
-      padding: 80px 24px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px;
-      align-items: center;
-      width: 100%;
-    }
-    @media (max-width: 1024px) {
-      .hero-inner { grid-template-columns: 1fr; }
-      .hero-mockup { order: -1; }
-    }
+    /* Drivers */
+    .drivers { background: linear-gradient(135deg, #0B7D4D, #16A96A 60%, #2AD888); color: #fff; border-radius: 32px; padding: 40px; display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center; }
+    .drivers img { width: 96px; filter: drop-shadow(0 6px 16px rgba(0,0,0,.2)); }
+    .drivers h2 { margin: 0 0 6px; }
+    .drivers p { opacity: .92; max-width: 620px; }
+    .drivers .btn { background: #fff; color: #0B7D4D; }
+    @media (max-width: 760px) { .drivers { grid-template-columns: 1fr; padding: 28px; } }
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--blue-100);
-      color: var(--blue-700);
-      font-size: .875rem;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 9999px;
-      margin-bottom: 24px;
-    }
-    .pulse-dot {
-      width: 8px; height: 8px;
-      background: var(--blue-500);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: .4; }
-    }
+    /* Privacy */
+    .privacy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .privacy-link { display: inline-block; margin-top: 22px; }
 
-    h1 {
-      font-size: clamp(2.25rem, 5vw, 3.75rem);
-      font-weight: 900;
-      line-height: 1.1;
-      color: var(--gray-900);
-      margin-bottom: 16px;
-    }
-    .hero-highlight {
-      display: block;
-      background: linear-gradient(90deg, var(--blue-600), var(--sky-500));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero-desc {
-      font-size: 1.125rem;
-      color: var(--gray-600);
-      line-height: 1.7;
-      max-width: 480px;
-      margin-bottom: 32px;
-    }
+    .disclaimer { background: var(--panel); border-radius: var(--radius); padding: 20px 22px; color: var(--muted); font-size: .95rem; }
+    .disclaimer strong { color: var(--ink); }
 
-    .hero-download {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 32px;
-    }
-    .play-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: #000;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 12px;
-      text-decoration: none;
-      transition: background .2s, transform .2s, box-shadow .2s;
-      box-shadow: 0 4px 14px rgba(0,0,0,.25);
-    }
-    .play-badge:hover { background: #1a1a1a; transform: scale(1.04); box-shadow: 0 6px 20px rgba(0,0,0,.3); }
-    .play-badge svg { width: 28px; height: 28px; fill: white; flex-shrink: 0; }
-    .play-badge-text { line-height: 1.2; }
-    .play-badge-text .above { font-size: .7rem; color: rgba(255,255,255,.75); }
-    .play-badge-text .main { font-size: 1rem; font-weight: 600; }
-    .play-badge-sub { font-size: .875rem; color: var(--gray-700); }
-    .play-badge-sub strong { display: block; color: var(--gray-800); font-weight: 600; }
-
-    .hero-stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-      padding-top: 16px;
-      border-top: 1px solid var(--gray-100);
-    }
-    .stat-val { font-size: 1.5rem; font-weight: 700; color: var(--blue-600); }
-    .stat-lbl { font-size: .8125rem; color: var(--gray-500); }
-
-    /* ─── PHONE MOCKUP ─── */
-    .hero-mockup { display: flex; justify-content: center; }
-    .phone-wrap {
-      position: relative;
-      width: 224px;
-    }
-    @media (min-width: 640px) { .phone-wrap { width: 256px; } }
-    .phone-outer {
-      background: var(--gray-900);
-      border-radius: 40px;
-      padding: 12px;
-      box-shadow: 0 30px 60px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.08) inset;
-    }
-    .phone-screen {
-      background: white;
-      border-radius: 30px;
-      overflow: hidden;
-      aspect-ratio: 9/19;
-      display: flex;
-      flex-direction: column;
-    }
-    .phone-map {
-      flex: 1;
-      position: relative;
-      background: #e8f4fd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .map-grid {
-      position: absolute; inset: 0;
-      opacity: .28;
-      background-image: linear-gradient(#93c5fd 1px, transparent 1px), linear-gradient(90deg, #93c5fd 1px, transparent 1px);
-      background-size: 24px 24px;
-    }
-    .phone-map svg.route { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .phone-eta {
-      position: absolute;
-      top: 12px; left: 12px; right: 12px;
-      background: white;
-      border-radius: 10px;
-      padding: 8px 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.12);
-      direction: ltr;
-    }
-    .eta-dot {
-      width: 8px; height: 8px;
-      background: #4ade80;
-      border-radius: 50%;
-      flex-shrink: 0;
-      animation: pulse 1.5s infinite;
-    }
-    .eta-label { font-size: 8px; color: var(--gray-500); line-height: 1; }
-    .eta-val { font-size: 11px; font-weight: 700; color: var(--gray-800); line-height: 1.3; }
-
-    .phone-bar {
-      background: var(--blue-700);
-      padding: 10px 12px;
-    }
-    .phone-bar-title {
-      font-size: 8px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: rgba(255,255,255,.65);
-      margin-bottom: 6px;
-    }
-    .phone-line {
-      background: rgba(255,255,255,.2);
-      border-radius: 8px;
-      padding: 6px 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 5px;
-      direction: ltr;
-    }
-    .line-num {
-      font-size: 10px;
-      font-weight: 700;
-      color: white;
-      background: rgba(255,255,255,.2);
-      border-radius: 4px;
-      padding: 2px 5px;
-    }
-    .line-dest { font-size: 8px; color: rgba(255,255,255,.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    .phone-deco-1 {
-      position: absolute; top: -16px; right: -16px;
-      width: 40px; height: 40px;
-      background: #fbbf24;
-      border-radius: 50%;
-      opacity: .6;
-      filter: blur(4px);
-    }
-    .phone-deco-2 {
-      position: absolute; bottom: -16px; left: -16px;
-      width: 32px; height: 32px;
-      background: var(--blue-400);
-      border-radius: 50%;
-      opacity: .5;
-      filter: blur(4px);
-    }
-
-    /* ─── SECTION BASE ─── */
-    section { padding: 80px 0; }
-    .container { max-width: 1152px; margin: 0 auto; padding: 0 24px; }
-    .section-header { text-align: center; margin-bottom: 56px; }
-    .section-header h2 { font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 800; color: var(--gray-900); }
-    .section-header p { margin-top: 12px; color: var(--gray-500); max-width: 480px; margin-left: auto; margin-right: auto; }
-
-    /* ─── HOW IT WORKS ─── */
-    .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-    @media (max-width: 768px) { .how-grid { grid-template-columns: 1fr; } }
-    .how-card { text-align: center; }
-    .how-icon-wrap { position: relative; display: inline-block; margin-bottom: 16px; }
-    .how-icon {
-      width: 64px; height: 64px;
-      border-radius: 16px;
-      background: var(--blue-100);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto;
-    }
-    .how-icon svg { width: 28px; height: 28px; stroke: var(--blue-600); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .how-step {
-      position: absolute;
-      top: -8px; right: -8px;
-      width: 24px; height: 24px;
-      background: var(--blue-600);
-      color: white;
-      font-size: .7rem;
-      font-weight: 700;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .how-card h3 { font-size: 1.125rem; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
-    .how-card p { font-size: .9rem; color: var(--gray-500); line-height: 1.7; }
-
-    /* ─── FEATURES ─── */
-    .features-section { background: linear-gradient(135deg, var(--blue-50), var(--sky-50)); }
-    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    @media (max-width: 1024px) { .features-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 640px) { .features-grid { grid-template-columns: 1fr; } }
-    .feature-card {
-      background: white;
-      border: 1px solid var(--blue-100);
-      border-radius: 16px;
-      padding: 24px;
-      transition: border-color .3s, box-shadow .3s, transform .3s;
-    }
-    .feature-card:hover { border-color: #93c5fd; box-shadow: 0 8px 30px rgba(37,99,235,.1); transform: translateY(-4px); }
-    .feature-icon {
-      width: 48px; height: 48px;
-      border-radius: 12px;
-      background: var(--blue-100);
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 16px;
-      transition: background .3s;
-    }
-    .feature-card:hover .feature-icon { background: var(--blue-600); }
-    .feature-icon svg { width: 24px; height: 24px; stroke: var(--blue-600); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .3s; }
-    .feature-card:hover .feature-icon svg { stroke: white; }
-    .feature-card h3 { font-size: 1rem; font-weight: 600; color: var(--gray-900); margin-bottom: 8px; }
-    .feature-card p { font-size: .875rem; color: var(--gray-500); line-height: 1.7; }
-
-    /* ─── CITIES ─── */
-    .cities-section { text-align: center; }
-    .cities-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
-    .city-tag {
-      padding: 8px 16px;
-      background: var(--blue-50);
-      color: var(--blue-700);
-      font-weight: 500;
-      border-radius: 9999px;
-      border: 1px solid var(--blue-200);
-      font-size: .875rem;
-    }
-    .cities-note { margin-top: 20px; font-size: .875rem; color: var(--gray-500); }
-
-    /* ─── PRIVACY ─── */
-    .privacy-section { background: var(--gray-50); }
-    .privacy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-    @media (max-width: 1024px) { .privacy-grid { grid-template-columns: 1fr; } }
-    .privacy-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--green-100);
-      color: var(--green-700);
-      font-size: .875rem;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 9999px;
-      margin-bottom: 20px;
-    }
-    .privacy-badge svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .privacy-title { font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 800; color: var(--gray-900); margin-bottom: 16px; line-height: 1.2; }
-    .privacy-title span { color: var(--blue-600); }
-    .privacy-desc { color: var(--gray-600); line-height: 1.7; margin-bottom: 20px; }
-    .privacy-list { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-    .privacy-list li { display: flex; align-items: center; gap: 12px; font-size: .9rem; color: var(--gray-700); }
-    .check-icon {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: var(--green-100);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .check-icon svg { width: 12px; height: 12px; fill: var(--green-600); }
-    .privacy-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      color: var(--blue-600);
-      font-size: .9rem;
-      font-weight: 500;
-      text-decoration: none;
-      transition: color .2s;
-    }
-    .privacy-link:hover { color: var(--blue-700); }
-    .privacy-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .privacy-card {
-      background: white;
-      border: 1px solid var(--gray-100);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,.04);
-    }
-    .privacy-card .p-emoji { font-size: 2rem; margin-bottom: 8px; }
-    .privacy-card h4 { font-size: .9rem; font-weight: 600; color: var(--gray-900); margin-bottom: 4px; }
-    .privacy-card p { font-size: .75rem; color: var(--gray-500); }
-
-    /* ─── DISCLAIMER ─── */
-    .disclaimer-section {
-      padding: 40px 0;
-      background: var(--amber-50);
-      border-top: 1px solid var(--amber-200);
-      border-bottom: 1px solid var(--amber-200);
-    }
-    .disclaimer-inner { display: flex; gap: 16px; align-items: flex-start; max-width: 896px; margin: 0 auto; padding: 0 24px; }
-    .disclaimer-emoji { font-size: 1.5rem; flex-shrink: 0; }
-    .disclaimer-inner h3 { font-size: 1rem; font-weight: 600; color: var(--amber-800); margin-bottom: 4px; }
-    .disclaimer-inner p { font-size: .875rem; color: var(--amber-700); line-height: 1.7; }
-
-    /* ─── CTA ─── */
-    .cta-section {
-      padding: 96px 0;
-      background: linear-gradient(90deg, var(--blue-600), var(--sky-500));
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-    }
-    .cta-blob-1 {
-      position: absolute; top: -40px; left: 20%;
-      width: 256px; height: 256px;
-      background: white; border-radius: 50%;
-      opacity: .08;
-    }
-    .cta-blob-2 {
-      position: absolute; bottom: -40px; right: 20%;
-      width: 192px; height: 192px;
-      background: white; border-radius: 50%;
-      opacity: .08;
-    }
-    .cta-inner { position: relative; max-width: 720px; margin: 0 auto; padding: 0 24px; }
-    .cta-title { font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 800; color: white; margin-bottom: 16px; }
-    .cta-desc { font-size: 1.125rem; color: rgba(255,255,255,.85); margin-bottom: 40px; }
-    .cta-actions { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    @media (min-width: 640px) { .cta-actions { flex-direction: row; justify-content: center; } }
-    .cta-trust { margin-top: 24px; font-size: .875rem; color: rgba(255,255,255,.7); }
-
-    .play-badge-white {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: white;
-      color: var(--blue-700);
-      padding: 14px 24px;
-      border-radius: 12px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background .2s, transform .2s;
-      box-shadow: 0 4px 16px rgba(0,0,0,.15);
-    }
-    .play-badge-white:hover { background: #f0f9ff; transform: scale(1.04); }
-    .play-badge-white svg { width: 24px; height: 24px; fill: var(--blue-600); flex-shrink: 0; }
-    .play-badge-white .text { line-height: 1.2; }
-    .play-badge-white .above { font-size: .7rem; color: var(--blue-500); }
-    .play-badge-white .main { font-size: 1rem; }
-    .cta-ios { color: rgba(255,255,255,.7); font-size: .875rem; }
-
-    /* ─── FOOTER ─── */
-    footer { background: var(--gray-900); color: var(--gray-400); padding: 48px 0 0; }
-    .footer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--gray-800); }
-    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; } }
-    .footer-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .footer-logo-icon {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .footer-logo-icon svg { width: 16px; height: 16px; fill: white; }
-    .footer-logo span { color: white; font-weight: 600; }
-    .footer-desc { font-size: .875rem; line-height: 1.6; }
-    .footer-col h4 { color: white; font-size: .875rem; font-weight: 600; margin-bottom: 12px; }
-    .footer-col a {
-      display: block;
-      font-size: .875rem;
-      color: var(--gray-400);
-      text-decoration: none;
-      margin-bottom: 8px;
-      transition: color .2s;
-    }
-    .footer-col a:hover { color: var(--blue-400); }
-    .footer-bottom { padding: 20px 24px; text-align: center; font-size: .8125rem; }
-
-    /* ─── SCROLL ARROW ─── */
-    .scroll-arrow {
-      position: absolute;
-      bottom: 32px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex; flex-direction: column;
-      align-items: center;
-      color: var(--gray-400);
-      animation: bounce .8s infinite alternate;
-    }
-    .scroll-arrow svg { width: 20px; height: 20px; }
-    @keyframes bounce { from { transform: translateX(-50%) translateY(0); } to { transform: translateX(-50%) translateY(6px); } }
-
-    /* ─── RTL ADJUSTMENTS ─── */
-    body.rtl .how-step { right: auto; left: -8px; }
-    body.rtl .hero-desc { margin-right: 0; margin-left: auto; }
+    footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: .92rem; }
+    .foot { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; }
+    .foot-links { display: flex; flex-wrap: wrap; gap: 18px; }
+    .foot-links a { color: var(--muted); text-decoration: none; }
+    .foot-links a:hover { color: var(--ink); }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav id="navbar">
-  <div class="nav-inner">
-    <a class="nav-logo" href="#">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 8C8 10 5.9 16.17 3.82 19L3 21l2-1c2.97-1.63 7-2 10-2 1-3 2-5 2-10z"/></svg>
-      </div>
-      <span class="logo-text">Massar</span>
-    </a>
-    <div class="nav-right">
-      <div class="lang-switcher">
-        <button class="lang-btn active" data-lang="ar">عربي</button>
-        <button class="lang-btn" data-lang="en">EN</button>
-        <button class="lang-btn" data-lang="fr">FR</button>
-      </div>
-      <a href="https://massar-dz.com" target="_blank" rel="noopener noreferrer" class="nav-site-link" data-i18n="navSite"></a>
-      <a href="https://play.google.com/store/apps/details?id=dz.massar.ys" target="_blank" rel="noopener noreferrer" class="btn-primary" data-i18n="navDownload"></a>
+<header class="top">
+  <div class="container top-inner">
+    <a class="brand" href="#top"><img src="assets/logo.png" alt="" width="36" height="36" />Massar</a>
+    <nav>
+      <a href="#features" data-i18n="navFeatures"></a>
+      <a href="#how" data-i18n="navHow"></a>
+      <a href="#drivers" data-i18n="navDrivers"></a>
+    </nav>
+    <div class="spacer"></div>
+    <div class="langs" role="group" aria-label="Language">
+      <button data-lang="ar">عربي</button>
+      <button data-lang="fr">FR</button>
+      <button data-lang="en">EN</button>
     </div>
+    <a class="btn btn-sm play-link" href="https://play.google.com/store/apps/details?id=dz.massar.ys" target="_blank" rel="noopener noreferrer" data-i18n="navGet"></a>
   </div>
-</nav>
+</header>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-blob-1"></div>
-  <div class="hero-blob-2"></div>
-  <div class="hero-inner">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="pulse-dot"></span>
-        <span data-i18n="badge"></span>
-      </div>
-      <h1>
-        <span data-i18n="heroTitle1"></span>
-        <span class="hero-highlight" data-i18n="heroTitle2"></span>
-      </h1>
-      <p class="hero-desc" data-i18n="heroDesc"></p>
-      <div class="hero-download">
-        <a class="play-badge" href="https://play.google.com/store/apps/details?id=dz.massar.ys" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.18 23.76a2 2 0 0 0 2.09-.22l12.09-6.93-3.24-3.26L3.18 23.76zM.94 1.08A2 2 0 0 0 .5 2.36v19.29a2 2 0 0 0 .44 1.28l.07.06 10.8-10.8v-.26L1.01 1.02l-.07.06zM20.36 10.37l-3.07-1.77-3.59 3.58 3.59 3.59 3.09-1.77a2.03 2.03 0 0 0 0-3.63zM5.27.46 17.3 7.37l-3.24 3.26L3.18.22A2 2 0 0 1 5.27.46z"/></svg>
-          <div class="play-badge-text">
-            <div class="above" data-i18n="downloadOn"></div>
-            <div class="main">Google Play</div>
-          </div>
-        </a>
-        <div class="play-badge-sub">
-          <strong data-i18n="android"></strong>
-          <span data-i18n="iosSoon"></span>
+<main id="top">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="pill"><span class="live-dot"></span><span data-i18n="heroPill"></span></span>
+        <h1><span data-i18n="heroTitle1"></span> <span class="accent" data-i18n="heroTitle2"></span></h1>
+        <p class="lead" data-i18n="heroLead"></p>
+        <div class="cta-row">
+          <a class="play play-link" href="https://play.google.com/store/apps/details?id=dz.massar.ys" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#34A853" d="M3.6 2.2 13.5 12l-9.9 9.8c-.4-.2-.6-.6-.6-1.1V3.3c0-.5.2-.9.6-1.1z"/><path fill="#FBBC04" d="m17 8.6-3.5 3.4L17 15.4l4-2.3c.9-.5.9-1.8 0-2.3z"/><path fill="#4285F4" d="M3.6 21.8 13.5 12l3.5 3.4-11.7 6.7c-.6.3-1.2.2-1.7-.3z"/><path fill="#EA4335" d="M3.6 2.2c.5-.5 1.1-.6 1.7-.3L17 8.6 13.5 12z"/></svg>
+            <span><small data-i18n="playSmall"></small><strong>Google Play</strong></span>
+          </a>
+          <span class="cta-note" data-i18n="ctaNote"></span>
+        </div>
+        <div class="chips">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-5 8-5s6.5 1 8 5"/><path d="M3 3l18 18"/></svg><span data-i18n="chipAccount"></span></span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h9M8.5 3v2M6 5c1 4 4 7 7 8M11 5c-1 4-4 7-7 8"/><path d="M13 21l4-9 4 9M14.5 18h5"/></svg><span>العربية · Français · English</span></span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a4 4 0 0 0-4-4h-.3A6 6 0 0 0 5 12.5 3.5 3.5 0 0 0 6.5 19H12"/><path d="M16 17l2 2 4-4"/></svg><span data-i18n="chipOffline"></span></span>
         </div>
       </div>
-      <div class="hero-stats" id="hero-stats"></div>
-    </div>
-
-    <!-- Phone mockup -->
-    <div class="hero-mockup">
       <div class="phone-wrap">
-        <div class="phone-outer">
-          <div class="phone-screen">
-            <div class="phone-map">
-              <div class="map-grid"></div>
-              <svg class="route" viewBox="0 0 100 160" preserveAspectRatio="none">
-                <path d="M20 140 Q30 100 50 80 Q70 60 80 20" stroke="#3b82f6" stroke-width="3" fill="none" stroke-dasharray="6 3"/>
-                <circle cx="55" cy="75" r="7" fill="#1d4ed8"/>
-                <text x="55" y="79" text-anchor="middle" fill="white" font-size="8" font-weight="bold">🚌</text>
-                <circle cx="20" cy="140" r="4" fill="#3b82f6" stroke="white" stroke-width="1.5"/>
-                <circle cx="35" cy="110" r="3" fill="#60a5fa" stroke="white" stroke-width="1"/>
-                <circle cx="65" cy="55" r="3" fill="#60a5fa" stroke="white" stroke-width="1"/>
-                <circle cx="80" cy="20" r="4" fill="#3b82f6" stroke="white" stroke-width="1.5"/>
-              </svg>
-              <div class="phone-eta">
-                <div class="eta-dot"></div>
-                <div>
-                  <div class="eta-label">Bus 1 · <span data-i18n="eta"></span></div>
-                  <div class="eta-val" data-i18n="etaMin"></div>
-                </div>
-              </div>
-            </div>
-            <div class="phone-bar">
-              <div class="phone-bar-title" data-i18n="nearby"></div>
-              <div class="phone-line"><span class="line-num">1</span><span class="line-dest" data-i18n="bus21dest"></span></div>
-              <div class="phone-line"><span class="line-num">2</span><span class="line-dest" data-i18n="bus36dest"></span></div>
-            </div>
+        <div class="phone"><img data-shot="home" alt="" width="720" height="1354" /></div>
+        <div class="float float-1"><span class="badge" style="background:#AB5500">1</span><span data-i18n="floatTowards"></span><span class="live-dot"></span><span class="when" data-i18n="floatWhen"></span></div>
+        <div class="float float-2"><span class="badge" style="background:#1673C7">2</span><span data-i18n="floatEvery"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Showcase -->
+  <section id="features">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="featuresEyebrow"></span>
+        <h2 data-i18n="featuresTitle"></h2>
+        <p data-i18n="featuresLead"></p>
+      </div>
+
+      <div class="show">
+        <div class="phone-wrap"><div class="phone"><img data-shot="stop" alt="" width="720" height="1354" loading="lazy" /></div></div>
+        <div>
+          <span class="eyebrow" data-i18n="s1Eyebrow"></span>
+          <h3 data-i18n="s1Title"></h3>
+          <p data-i18n="s1Text"></p>
+          <ul data-list="s1Points"></ul>
+        </div>
+      </div>
+
+      <div class="show">
+        <div class="phone-wrap"><div class="phone"><img data-shot="track" alt="" width="720" height="1354" loading="lazy" /></div></div>
+        <div>
+          <span class="eyebrow" data-i18n="s2Eyebrow"></span>
+          <h3 data-i18n="s2Title"></h3>
+          <p data-i18n="s2Text"></p>
+          <ul data-list="s2Points"></ul>
+        </div>
+      </div>
+
+      <div class="show">
+        <div class="phone-wrap"><div class="phone"><img data-shot="line" alt="" width="720" height="1354" loading="lazy" /></div></div>
+        <div>
+          <span class="eyebrow" data-i18n="s3Eyebrow"></span>
+          <h3 data-i18n="s3Title"></h3>
+          <p data-i18n="s3Text"></p>
+          <ul data-list="s3Points"></ul>
+        </div>
+      </div>
+
+      <div class="grid" id="feature-grid"></div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="howEyebrow"></span>
+        <h2 data-i18n="howTitle"></h2>
+        <p data-i18n="howLead"></p>
+      </div>
+      <div class="steps" id="steps"></div>
+    </div>
+  </section>
+
+  <!-- Where -->
+  <section>
+    <div class="container">
+      <div class="where">
+        <img src="assets/logo.png" alt="" width="132" height="132" loading="lazy" />
+        <div>
+          <span class="eyebrow" data-i18n="whereEyebrow"></span>
+          <h2 data-i18n="whereTitle"></h2>
+          <div class="lines">
+            <div class="line-row"><span class="badge" style="background:#AB5500">1</span><span data-i18n="line1"></span></div>
+            <div class="line-row"><span class="badge" style="background:#1673C7">2</span><span data-i18n="line2"></span></div>
           </div>
+          <p class="note" data-i18n="whereNote"></p>
         </div>
-        <div class="phone-deco-1"></div>
-        <div class="phone-deco-2"></div>
       </div>
     </div>
-  </div>
-  <div class="scroll-arrow">
-    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-  </div>
-</section>
+  </section>
 
-<!-- HOW IT WORKS -->
-<section id="how">
-  <div class="container">
-    <div class="section-header">
-      <h2 data-i18n="howTitle"></h2>
-      <p data-i18n="howSubtitle"></p>
-    </div>
-    <div class="how-grid">
-      <div class="how-card">
-        <div class="how-icon-wrap">
-          <div class="how-icon">
-            <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-          </div>
-          <span class="how-step">01</span>
+  <!-- Drivers -->
+  <section id="drivers">
+    <div class="container">
+      <div class="drivers">
+        <img src="assets/logo-driver.png" alt="" width="96" height="96" loading="lazy" />
+        <div>
+          <h2 data-i18n="driversTitle"></h2>
+          <p data-i18n="driversText"></p>
         </div>
-        <h3 data-i18n="step1Title"></h3>
-        <p data-i18n="step1Desc"></p>
-      </div>
-      <div class="how-card">
-        <div class="how-icon-wrap">
-          <div class="how-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          </div>
-          <span class="how-step">02</span>
-        </div>
-        <h3 data-i18n="step2Title"></h3>
-        <p data-i18n="step2Desc"></p>
-      </div>
-      <div class="how-card">
-        <div class="how-icon-wrap">
-          <div class="how-icon">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <span class="how-step">03</span>
-        </div>
-        <h3 data-i18n="step3Title"></h3>
-        <p data-i18n="step3Desc"></p>
+        <a class="btn" href="driver.html" data-i18n="driversCta"></a>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FEATURES -->
-<section class="features-section">
-  <div class="container">
-    <div class="section-header">
-      <h2 data-i18n="featuresTitle"></h2>
-      <p data-i18n="featuresSubtitle"></p>
+  <!-- Privacy -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="privacyEyebrow"></span>
+        <h2 data-i18n="privacyTitle"></h2>
+        <p data-i18n="privacyLead"></p>
+      </div>
+      <div class="privacy-grid" id="privacy-grid"></div>
+      <div style="text-align:center"><a class="privacy-link" href="https://my-transit-api.onrender.com/privacy-policy" target="_blank" rel="noopener noreferrer" data-i18n="privacyLink"></a></div>
     </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <h3 data-i18n="f1Title"></h3><p data-i18n="f1Desc"></p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-        <h3 data-i18n="f2Title"></h3><p data-i18n="f2Desc"></p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-        <h3 data-i18n="f3Title"></h3><p data-i18n="f3Desc"></p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-        <h3 data-i18n="f4Title"></h3><p data-i18n="f4Desc"></p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16"/><path d="M16 6v16"/></svg></div>
-        <h3 data-i18n="f5Title"></h3><p data-i18n="f5Desc"></p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-        <h3 data-i18n="f6Title"></h3><p data-i18n="f6Desc"></p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg></div>
-        <h3 data-i18n="f7Title"></h3><p data-i18n="f7Desc"></p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-        <h3 data-i18n="f8Title"></h3><p data-i18n="f8Desc"></p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
-        <h3 data-i18n="f9Title"></h3><p data-i18n="f9Desc"></p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
-        <h3 data-i18n="f10Title"></h3><p data-i18n="f10Desc"></p>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- CITIES -->
-<section class="cities-section">
-  <div class="container">
-    <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;color:var(--gray-900)" data-i18n="citiesTitle"></h2>
-    <div class="cities-tags">
-      <span class="city-tag">Cheria / الشريعة</span>
-      <span class="city-tag city-tag-soon" data-i18n="citiesMore"></span>
+  <section style="padding-top:0">
+    <div class="container">
+      <p class="disclaimer"><strong data-i18n="disclaimerTitle"></strong> <span data-i18n="disclaimerText"></span></p>
     </div>
-    <p class="cities-note" data-i18n="citiesSubtitle"></p>
-  </div>
-</section>
+  </section>
+</main>
 
-<!-- PRIVACY -->
-<section class="privacy-section">
-  <div class="container">
-    <div class="privacy-grid">
-      <div>
-        <div class="privacy-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-          <span data-i18n="privacyBadge"></span>
-        </div>
-        <p class="privacy-title"><span data-i18n="privacyTitle1"></span><br><span data-i18n="privacyTitle2"></span></p>
-        <p class="privacy-desc" data-i18n="privacyDesc"></p>
-        <ul class="privacy-list" id="privacy-list"></ul>
-        <a href="https://my-transit-api.onrender.com/privacy-policy" target="_blank" rel="noopener noreferrer" class="privacy-link">
-          <span data-i18n="privacyLink"></span>
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-        </a>
-      </div>
-      <div class="privacy-cards" id="privacy-cards"></div>
-    </div>
-  </div>
-</section>
-
-<!-- DISCLAIMER -->
-<div class="disclaimer-section">
-  <div class="disclaimer-inner">
-    <div class="disclaimer-emoji">⚠️</div>
-    <div>
-      <h3 data-i18n="disclaimerTitle"></h3>
-      <p data-i18n="disclaimerText"></p>
-    </div>
-  </div>
-</div>
-
-<!-- DRIVERS -->
-<section class="drivers-section" id="drivers">
-  <div class="container drivers-inner">
-    <div>
-      <span class="drivers-badge" data-i18n="driversBadge"></span>
-      <h2 data-i18n="driversTitle"></h2>
-      <p data-i18n="driversDesc"></p>
-    </div>
-    <a class="btn-primary drivers-cta" href="driver.html" data-i18n="driversCta"></a>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-  <div class="cta-blob-1"></div>
-  <div class="cta-blob-2"></div>
-  <div class="cta-inner">
-    <h2 class="cta-title" data-i18n="ctaTitle"></h2>
-    <p class="cta-desc" data-i18n="ctaDesc"></p>
-    <div class="cta-actions">
-      <a class="play-badge-white" href="https://play.google.com/store/apps/details?id=dz.massar.ys" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.18 23.76a2 2 0 0 0 2.09-.22l12.09-6.93-3.24-3.26L3.18 23.76zM.94 1.08A2 2 0 0 0 .5 2.36v19.29a2 2 0 0 0 .44 1.28l.07.06 10.8-10.8v-.26L1.01 1.02l-.07.06zM20.36 10.37l-3.07-1.77-3.59 3.58 3.59 3.59 3.09-1.77a2.03 2.03 0 0 0 0-3.63zM5.27.46 17.3 7.37l-3.24 3.26L3.18.22A2 2 0 0 1 5.27.46z"/></svg>
-        <div class="text">
-          <div class="above" data-i18n="downloadOn"></div>
-          <div class="main">Google Play</div>
-        </div>
-      </a>
-      <div class="cta-ios" data-i18n="iosSoon"></div>
-    </div>
-    <p class="cta-trust" data-i18n="ctaTrust"></p>
-  </div>
-</section>
-
-<!-- FOOTER -->
 <footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-logo">
-          <div class="footer-logo-icon"><svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 19L3 21l2-1c2.97-1.63 7-2 10-2 1-3 2-5 2-10z"/></svg></div>
-          <span>Massar</span>
-        </div>
-        <p class="footer-desc" data-i18n="footerDesc"></p>
-      </div>
-      <div class="footer-col">
-        <h4 data-i18n="footerLinks"></h4>
-        <a href="https://massar-dz.com" target="_blank" rel="noopener noreferrer" data-i18n="footerSite"></a>
-        <a href="https://my-transit-api.onrender.com/privacy-policy" target="_blank" rel="noopener noreferrer" data-i18n="footerPrivacy"></a>
-        <a href="#how" data-i18n="footerDataSource"></a>
-        <a href="driver.html" data-i18n="footerDrivers"></a>
-        <a href="https://my-transit-api.onrender.com/terms-and-conditions" target="_blank" rel="noopener noreferrer" data-i18n="footerTerms"></a>
-        <a href="https://play.google.com/store/apps/details?id=dz.massar.ys" target="_blank" rel="noopener noreferrer" data-i18n="footerPlay"></a>
-      </div>
-      <div class="footer-col">
-        <h4 data-i18n="footerContact"></h4>
-        <a href="mailto:contact@massar-dz.com" dir="ltr">contact@massar-dz.com</a>
-        <a href="mailto:drivers@massar-dz.com" dir="ltr">drivers@massar-dz.com</a>
-        <a href="mailto:privacy@massar-dz.com" dir="ltr">privacy@massar-dz.com</a>
-      </div>
+  <div class="container foot">
+    <div>
+      <a class="brand" href="#top"><img src="assets/logo.png" alt="" width="28" height="28" />Massar</a>
+      <p style="margin-top:8px" data-i18n="footerTagline"></p>
+    </div>
+    <div class="foot-links">
+      <a href="driver.html" data-i18n="navDrivers"></a>
+      <a href="https://my-transit-api.onrender.com/privacy-policy" target="_blank" rel="noopener noreferrer" data-i18n="footerPrivacy"></a>
+      <a href="https://my-transit-api.onrender.com/terms-and-conditions" target="_blank" rel="noopener noreferrer" data-i18n="footerTerms"></a>
+      <a class="play-link" href="https://play.google.com/store/apps/details?id=dz.massar.ys" target="_blank" rel="noopener noreferrer">Google Play</a>
+      <a href="mailto:contact@massar-dz.com" dir="ltr">contact@massar-dz.com</a>
     </div>
   </div>
-  <div class="footer-bottom" data-i18n="footerDisclaimer"></div>
 </footer>
 
 <script>
-  // ─── TRANSLATIONS ───────────────────────────────────────────────────────────
+  // Feature icons (simple line drawings in the spirit of the app's rounded Material icons).
+  const ICONS = {
+    route: '<path d="M6 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M9 16h6a3 3 0 0 0 0-6h-.5M9 8H6"/>',
+    bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+    widget: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+    offline: '<path d="M21 15a4 4 0 0 0-4-4h-.3A6 6 0 0 0 5 12.5 3.5 3.5 0 0 0 6.5 19H12"/><path d="M16 17l2 2 4-4"/>',
+    flag: '<path d="M4 21V4"/><path d="M4 4h12l-2 4 2 4H4"/>',
+    people: '<circle cx="9" cy="8" r="3.5"/><path d="M2 20c.8-3.5 3.8-5 7-5s6.2 1.5 7 5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .6 3.4 2.2 4 5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+    lock: '<rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+    pin: '<path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+    share: '<circle cx="12" cy="12" r="3"/><path d="M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4"/>',
+    trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+  };
+  const svg = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+
   const i18n = {
+    ar: {
+      dir: 'rtl', title: 'مسار – حافلتك مباشرةً',
+      navFeatures: 'المزايا', navHow: 'كيف يعمل', navDrivers: 'للسائقين', navGet: 'حمّل التطبيق',
+      heroPill: 'مباشر في الشريعة', heroTitle1: 'حافلتك،', heroTitle2: 'مباشرةً على الخريطة',
+      heroLead: 'يعرض مسار حافلات مدينتك وهي تتحرك، ومتى تصل إلى محطتك، وكيف تصل إلى وجهتك. مجاني وبلا حساب.',
+      playSmall: 'حمّله من', ctaNote: 'مجاني · أندرويد 7 أو أحدث',
+      chipAccount: 'بلا حساب', chipOffline: 'يعمل دون اتصال',
+      floatTowards: 'نحو الجرف', floatWhen: '3 د', floatEvery: 'حافلة كل ~15 د',
+      featuresEyebrow: 'المزايا', featuresTitle: 'كل ما يلزم لتنتظر أقل', featuresLead: 'صُمّم مسار حول الخريطة: المحطات والخطوط والحافلات الحية في مكان واحد.',
+      s1Eyebrow: 'في المحطة', s1Title: 'اعرف متى تصل الحافلة', s1Text: 'افتح محطة لترى الحافلات القادمة إليها وكم تبعد، محسوبة على مسار الخط الحقيقي.',
+      s1Points: ['وقت الوصول بالدقائق، يُحدّث تلقائيًا', 'تذكير قبل وصول الحافلة', 'وإن لم تكن حافلة مباشرة: التواتر المعتاد وأول حافلة'],
+      s2Eyebrow: 'على الطريق', s2Title: 'تابع حافلتك حتى محطتك', s2Text: 'اضغط «تتبع» لترى الحافلة تتحرك على الخريطة، مع المحطة التالية وموعد الوصول لكل محطة.',
+      s2Points: ['السرعة والمحطة التالية مباشرةً', 'تنبيه قبل محطة نزولك، حتى والشاشة مطفأة', 'رحلات مع تغيير الحافلة والمشي إلى المحطة'],
+      s3Eyebrow: 'الخطوط', s3Title: 'كل خط، بمواعيده وتنبيهاته', s3Text: 'مسار كل اتجاه ومحطاته، والتعريفة والمواعيد والتواتر، والتنبيهات التي ينشرها فريق مسار.',
+      s3Points: ['إضرابات وتحويلات ومحطات منقولة', 'المواعيد المعتادة مستخلصة من الرحلات السابقة', 'الإبلاغ عن مشكلة بلمستين'],
+      grid: [
+        ['route', 'رحلات مع تغيير الحافلة', 'اختر وجهة أو اضغط مطولًا على الخريطة: يجمع مسار بين المشي والحافلات.'],
+        ['bell', 'تنبيهات الرحلة', '«حافلتك تصل»، «محطتك التالية»، «انزل الآن»، حتى والشاشة مطفأة.'],
+        ['widget', 'أداة الشاشة الرئيسية', 'الحافلات القادمة إلى محطتك دون فتح التطبيق.'],
+        ['offline', 'دون اتصال', 'الخطوط والمحطات والمسارات محفوظة على هاتفك.'],
+        ['clock', 'حتى دون حافلة مباشرة', 'أول وآخر حافلة والتواتر المعتاد والتعريفة لكل خط.'],
+        ['share', 'شارك الحافلة التي تركبها', 'إن لم يشارك السائق حافلته، يمكنك أن تُظهرها للآخرين دون كشف هويتك.'],
+        ['flag', 'أبلغ عن مشكلة', 'حافلة لم تأتِ أو محطة في غير مكانها: يصل بلاغك إلى فريق مسار.'],
+        ['moon', 'مريح للعين', 'العربية والفرنسية والإنجليزية، ووضع داكن.'],
+      ],
+      howEyebrow: 'كيف يعمل', howTitle: 'مجتمعي، وبسيط', howLead: 'لا أجهزة في الحافلات: الهواتف تكفي.',
+      steps: [
+        ['السائقون يشاركون', 'يشغّل السائقون تطبيق Massar Driver أثناء العمل فيُرسل موقع الحافلة.'],
+        ['مسار يحسب', 'يحدد الخادم اتجاه الحافلة وموقعها على الخط ويحسب وقت الوصول إلى كل محطة.'],
+        ['أنت تنتظر أقل', 'ترى الحافلة قادمة وتخرج في الوقت المناسب، أو تخطط لرحلتك.'],
+      ],
+      whereEyebrow: 'أين', whereTitle: 'متوفر في الشريعة (تبسة)', line1: 'السوق الأبيض ↔ الجرف', line2: 'طريق تبسة ↔ المحطة البرية',
+      whereNote: 'تنضم مدن وخطوط جديدة كلما انضم سائقون إلى مسار.',
+      driversTitle: 'هل أنت سائق حافلة؟', driversText: 'أظهر حافلتك للركاب الذين ينتظرونها، وشاهد كم منهم يتابعك. مجاني، وهاتفك يكفي.', driversCta: 'اكتشف Massar Driver',
+      privacyEyebrow: 'الخصوصية', privacyTitle: 'لا نعرف من أنت، ولا نريد أن نعرف', privacyLead: 'مسار مبني ليعمل دون جمع بياناتك.',
+      privacy: [
+        ['lock', 'بلا حساب', 'لا اسم ولا هاتف ولا بريد، ولا معرّف لجهازك.'],
+        ['pin', 'موقعك لك', 'يُستخدم على هاتفك للمحطات القريبة؛ وللرحلة يُرسل للحساب فقط ولا يُحفظ.'],
+        ['people', 'مشاركة اختيارية', 'مشاركة الحافلة التي تركبها لا تتم إلا بموافقتك، ودون كشف هويتك.'],
+        ['trash', 'لا شيء يُحفظ', 'المواقع لا تُخزَّن، والبلاغات مجهولة الهوية.'],
+      ],
+      privacyLink: 'اقرأ سياسة الخصوصية',
+      disclaimerTitle: 'تطبيق مستقل.', disclaimerText: 'مسار تطبيق مجتمعي لا يتبع أي جهة حكومية أو سلطة بلدية أو مشغّل نقل عام. يشارك مواقع الحافلات طوعًا السائقون عبر Massar Driver، أو ركاب على متنها يختارون ذلك.',
+      footerTagline: 'تتبع مجتمعي للحافلات في الجزائر.', footerPrivacy: 'سياسة الخصوصية', footerTerms: 'شروط الاستخدام',
+    },
     fr: {
-      driversCta: "Devenir chauffeur Massar",
-      driversDesc: "Installez Massar Driver, choisissez votre ligne et partagez votre position pendant le service. Vos passagers voient le bus arriver, et vous voyez combien vous suivent.",
-      driversTitle: "Vous êtes chauffeur de bus ?",
-      driversBadge: "Massar Driver",
-      footerTerms: "Conditions d'utilisation",
-      footerDrivers: "Pour les chauffeurs",
-      citiesMore: "Bientôt ailleurs",
-      f10Desc: "Bus qui ne vient pas, arrêt mal placé, information erronée : signalez-le en deux gestes, anonymement.",
-      f10Title: "Signaler un problème",
-      f9Desc: "Les prochains bus de votre arrêt, directement sur l'écran d'accueil de votre téléphone.",
-      f9Title: "Widget d'écran d'accueil",
-      f8Desc: "Horaires, fréquence habituelle et tarif de chaque ligne, appris des trajets passés ou donnés par l'équipe Massar.",
-      f8Title: "Même sans bus en direct",
-      f7Desc: "Choisissez une destination : Massar combine marche et bus, avec correspondances, et vous prévient avant votre arrêt, même écran éteint.",
-      f7Title: "Itinéraires avec correspondances",
-      dir: "ltr", font: "'Inter', system-ui, sans-serif",
-      navSite: "massar-dz.com", navDownload: "Télécharger",
-      badge: "Suivi de bus communautaire en Algérie",
-      heroTitle1: "Suivez votre bus", heroTitle2: "en temps réel",
-      heroDesc: "Massar est une application communautaire qui permet aux passagers algériens de suivre les bus en temps réel, réduire l'attente et planifier leurs trajets.",
-      downloadOn: "Télécharger sur", android: "Android · Gratuit", iosSoon: "Android 7 ou plus récent",
-      stats: [
-        { val: "100%", lbl: "Gratuit" }, { val: "3", lbl: "Langues" }, { val: "0", lbl: "Compte nécessaire" }, { val: "Direct", lbl: "Position des bus" }
+      dir: 'ltr', title: 'Massar – Votre bus, en direct',
+      navFeatures: 'Fonctionnalités', navHow: 'Comment ça marche', navDrivers: 'Chauffeurs', navGet: 'Télécharger',
+      heroPill: 'En direct à Cheria', heroTitle1: 'Votre bus,', heroTitle2: 'en direct sur la carte',
+      heroLead: "Massar montre les bus de votre ville en mouvement, quand ils arrivent à votre arrêt et comment rejoindre votre destination. Gratuit, sans compte.",
+      playSmall: 'Disponible sur', ctaNote: 'Gratuit · Android 7 ou plus récent',
+      chipAccount: 'Sans compte', chipOffline: 'Fonctionne hors ligne',
+      floatTowards: 'vers El Jorf', floatWhen: '3 min', floatEvery: 'un bus toutes les ~15 min',
+      featuresEyebrow: 'Fonctionnalités', featuresTitle: 'Tout pour attendre moins', featuresLead: 'Massar est construit autour de la carte : arrêts, lignes et bus en direct au même endroit.',
+      s1Eyebrow: "À l'arrêt", s1Title: 'Sachez quand arrive le bus', s1Text: "Ouvrez un arrêt pour voir les bus qui s'en approchent et à quelle distance, calculée sur le vrai tracé de la ligne.",
+      s1Points: ["L'heure d'arrivée en minutes, mise à jour en continu", "Un rappel avant l'arrivée du bus", 'Sans bus en direct : la fréquence habituelle et le premier bus'],
+      s2Eyebrow: 'En route', s2Title: "Suivez votre bus jusqu'à l'arrêt", s2Text: "Touchez « Suivre » pour voir le bus avancer sur la carte, avec le prochain arrêt et l'heure de passage à chaque arrêt.",
+      s2Points: ['Vitesse et prochain arrêt en direct', 'Une alerte avant votre arrêt, même écran éteint', "Des trajets avec correspondances et la marche jusqu'à l'arrêt"],
+      s3Eyebrow: 'Les lignes', s3Title: 'Chaque ligne, avec ses horaires et ses alertes', s3Text: "Le tracé de chaque sens et ses arrêts, le tarif, les horaires et la fréquence, et les alertes publiées par l'équipe Massar.",
+      s3Points: ['Grèves, déviations, arrêts déplacés', 'Horaires habituels appris des trajets passés', 'Signaler un problème en deux gestes'],
+      grid: [
+        ['route', 'Trajets avec correspondances', 'Choisissez une destination ou faites un appui long sur la carte : Massar combine marche et bus.'],
+        ['bell', 'Alertes de trajet', '« Votre bus arrive », « Prochain arrêt », « Descendez », même écran éteint.'],
+        ['widget', "Widget d'écran d'accueil", "Les prochains bus de votre arrêt sans ouvrir l'application."],
+        ['offline', 'Hors ligne', 'Lignes, arrêts et tracés enregistrés sur votre téléphone.'],
+        ['clock', 'Même sans bus en direct', 'Premier et dernier bus, fréquence habituelle et tarif de chaque ligne.'],
+        ['share', 'Partagez le bus où vous êtes', 'Si le chauffeur ne partage pas son bus, vous pouvez le montrer aux autres, anonymement.'],
+        ['flag', 'Signalez un problème', "Bus qui n'est pas venu, arrêt mal placé : votre signalement arrive à l'équipe Massar."],
+        ['moon', 'Confortable', 'Arabe, français et anglais, et un mode sombre.'],
       ],
-      howTitle: "Comment fonctionne Massar ?",
-      howSubtitle: "Un système communautaire simple : les chauffeurs partagent, les passagers profitent.",
-      step1Title: "Les chauffeurs partagent", step1Desc: "Les chauffeurs installent Massar Driver et partagent leur position pendant leur service. Un passager à bord peut aussi partager le bus, anonymement.",
-      step2Title: "Massar affiche", step2Desc: "L'application affiche les positions des bus en temps réel sur la carte et calcule les temps d'arrivée.",
-      step3Title: "Vous planifiez", step3Desc: "Vous savez exactement quand votre bus arrive. Fini l'attente inutile aux arrêts.",
-      featuresTitle: "Tout ce dont vous avez besoin", featuresSubtitle: "Des fonctionnalités pensées pour les usagers des transports en commun algériens.",
-      f1Title: "Suivi en Temps Réel", f1Desc: "Voir les bus se déplacer en temps réel sur une carte interactive grâce aux données GPS partagées par les chauffeurs.",
-      f2Title: "Temps d'Arrivée Précis", f2Desc: "Obtenez des estimations d'arrivée en temps réel basées sur les données GPS des chauffeurs.",
-      f3Title: "Lignes & Arrêts", f3Desc: "Consultez les trajets complets, les arrêts et les directions pour toutes les lignes disponibles.",
-      f4Title: "Alertes de Service", f4Desc: "Grèves, déviations, arrêts déplacés : l'équipe Massar publie les alertes sur les lignes et les arrêts concernés.",
-      f5Title: "Accès Hors Ligne", f5Desc: "Lignes, arrêts et tracés sont enregistrés sur votre téléphone et restent consultables sans connexion.",
-      f6Title: "Interface Trilingue", f6Desc: "Disponible en arabe, français et anglais pour tous les usagers algériens.",
-      citiesTitle: "Disponible à Cheria (Tébessa)",
-      citiesSubtitle: "D'autres villes arrivent à mesure que des chauffeurs rejoignent Massar.",
-      privacyBadge: "Respect total de la vie privée",
-      privacyTitle1: "Votre vie privée,", privacyTitle2: "notre priorité",
-      privacyDesc: "Pas de compte, rien qui vous identifie. Votre position sert sur votre téléphone à trouver les arrêts proches ; pour un itinéraire, elle est envoyée à Massar le temps du calcul, sans être conservée.",
-      privacyPoints: ["Aucun compte, aucun identifiant personnel", "Position utilisée pour les arrêts proches et les itinéraires, jamais conservée", "Partager le bus où vous êtes est facultatif et anonyme", "Signalements anonymes", "Positions des bus partagées volontairement"],
-      privacyLink: "Lire notre politique de confidentialité",
-      privacyCards: [
-        { e: "🔒", t: "Sans compte", d: "Rien qui vous identifie" },
-        { e: "📡", t: "Communautaire", d: "Chauffeurs et passagers volontaires" },
-        { e: "🗑️", t: "Rien de conservé", d: "Positions jamais stockées" },
-        { e: "📴", t: "Hors ligne", d: "Lignes et arrêts enregistrés" }
+      howEyebrow: 'Comment ça marche', howTitle: 'Communautaire et simple', howLead: 'Aucun boîtier dans les bus : les téléphones suffisent.',
+      steps: [
+        ['Les chauffeurs partagent', 'Pendant le service, les chauffeurs lancent Massar Driver, qui envoie la position du bus.'],
+        ['Massar calcule', "Le serveur trouve le sens du bus, sa position sur la ligne et l'heure d'arrivée à chaque arrêt."],
+        ['Vous attendez moins', 'Vous voyez le bus arriver et sortez au bon moment, ou vous planifiez votre trajet.'],
       ],
-      disclaimerTitle: "Application indépendante",
-      disclaimerText: "Massar est une application communautaire indépendante. Elle n'est pas affiliée à une entité gouvernementale algérienne, une autorité municipale ou un opérateur de transport en commun. Les positions des bus sont partagées volontairement par les chauffeurs via Massar Driver, ou par des passagers à bord qui le choisissent.",
-      ctaTitle: "Fini l'attente inutile aux arrêts",
-      ctaDesc: "Téléchargez Massar gratuitement et commencez à suivre vos bus en temps réel dès aujourd'hui.",
-      ctaTrust: "Gratuit · Sans compte · En arabe, français et anglais",
-      footerDesc: "Suivi de bus communautaire en temps réel pour l'Algérie.",
-      footerLinks: "Liens", footerContact: "Contact",
-      footerSite: "Site web", footerPrivacy: "Politique de confidentialité",
-      footerDataSource: "Comment ça marche", footerPlay: "Google Play",
-      footerDisclaimer: "Application indépendante, non affiliée à une entité gouvernementale algérienne.",
-      eta: "Arrivée dans", etaMin: "3 minutes",
-      nearby: "Lignes à proximité",
-      bus21dest: "Sog Labiod → El Jorf", bus36dest: "Trig Tebessa → Gare routière"
+      whereEyebrow: 'Où', whereTitle: 'Disponible à Cheria (Tébessa)', line1: 'Sog Labiod ↔ El Jorf', line2: 'Trig Tebessa ↔ Gare routière',
+      whereNote: "D'autres villes et lignes arrivent à mesure que des chauffeurs rejoignent Massar.",
+      driversTitle: 'Vous êtes chauffeur de bus ?', driversText: "Montrez votre bus aux passagers qui l'attendent et voyez combien vous suivent. Gratuit, votre téléphone suffit.", driversCta: 'Découvrir Massar Driver',
+      privacyEyebrow: 'Vie privée', privacyTitle: 'Nous ne savons pas qui vous êtes, et tant mieux', privacyLead: 'Massar est conçu pour fonctionner sans collecter vos données.',
+      privacy: [
+        ['lock', 'Sans compte', "Ni nom, ni téléphone, ni e-mail, ni identifiant d'appareil."],
+        ['pin', 'Votre position reste à vous', 'Utilisée sur votre téléphone pour les arrêts proches ; pour un itinéraire, envoyée pour le calcul puis oubliée.'],
+        ['people', 'Partage facultatif', "Partager le bus où vous êtes ne se fait qu'avec votre accord, anonymement."],
+        ['trash', 'Rien de conservé', 'Les positions ne sont pas stockées, les signalements sont anonymes.'],
+      ],
+      privacyLink: 'Lire la politique de confidentialité',
+      disclaimerTitle: 'Application indépendante.', disclaimerText: 'Massar est une application communautaire, non affiliée à une entité gouvernementale, une autorité municipale ou un opérateur de transport. Les positions des bus sont partagées volontairement par les chauffeurs via Massar Driver, ou par des passagers à bord qui le choisissent.',
+      footerTagline: 'Suivi de bus communautaire en Algérie.', footerPrivacy: 'Confidentialité', footerTerms: "Conditions d'utilisation",
     },
     en: {
-      driversCta: "Become a Massar driver",
-      driversDesc: "Install Massar Driver, pick your line and share your position during your shift. Your passengers see the bus coming, and you see how many follow you.",
-      driversTitle: "Are you a bus driver?",
-      driversBadge: "Massar Driver",
-      footerTerms: "Terms of use",
-      footerDrivers: "For drivers",
-      citiesMore: "More soon",
-      f10Desc: "A bus that didn't come, a stop in the wrong place, wrong information: report it in two taps, anonymously.",
-      f10Title: "Report a problem",
-      f9Desc: "The next buses at your stop, right on your phone's home screen.",
-      f9Title: "Home screen widget",
-      f8Desc: "Hours, usual frequency and fare of each line, learned from past trips or set by Massar's team.",
-      f8Title: "Even with no bus live",
-      f7Desc: "Pick a destination: Massar combines walking and buses, with transfers, and alerts you before your stop, even with the screen off.",
-      f7Title: "Trips with transfers",
-      dir: "ltr", font: "'Inter', system-ui, sans-serif",
-      navSite: "massar-dz.com", navDownload: "Download",
-      badge: "Community bus tracker for Algeria",
-      heroTitle1: "Track your bus", heroTitle2: "in real time",
-      heroDesc: "Massar is a community-powered app that helps Algerian commuters track public buses in real time, reduce waiting time, and plan smarter trips.",
-      downloadOn: "Get it on", android: "Android · Free", iosSoon: "Android 7 or newer",
-      stats: [
-        { val: "100%", lbl: "Free" }, { val: "3", lbl: "Languages" }, { val: "0", lbl: "Account needed" }, { val: "Live", lbl: "Bus positions" }
+      dir: 'ltr', title: 'Massar – Your bus, live',
+      navFeatures: 'Features', navHow: 'How it works', navDrivers: 'Drivers', navGet: 'Get the app',
+      heroPill: 'Live in Cheria', heroTitle1: 'Your bus,', heroTitle2: 'live on the map',
+      heroLead: 'Massar shows the buses of your city moving, when they reach your stop and how to get where you are going. Free, no account.',
+      playSmall: 'Get it on', ctaNote: 'Free · Android 7 or newer',
+      chipAccount: 'No account', chipOffline: 'Works offline',
+      floatTowards: 'to El Jorf', floatWhen: '3 min', floatEvery: 'a bus every ~15 min',
+      featuresEyebrow: 'Features', featuresTitle: 'Everything to wait less', featuresLead: 'Massar is built around the map: stops, lines and live buses in one place.',
+      s1Eyebrow: 'At the stop', s1Title: 'Know when the bus arrives', s1Text: 'Open a stop to see the buses heading to it and how far they are, measured along the real route of the line.',
+      s1Points: ['Arrival time in minutes, always up to date', 'A reminder before the bus comes', 'No bus live? The usual frequency and the first bus'],
+      s2Eyebrow: 'On the way', s2Title: 'Follow your bus to your stop', s2Text: 'Tap Track to watch the bus move on the map, with the next stop and the time it reaches each stop.',
+      s2Points: ['Speed and next stop, live', 'An alert before your stop, even with the screen off', 'Trips with transfers and the walk to the stop'],
+      s3Eyebrow: 'Lines', s3Title: 'Every line, with its hours and alerts', s3Text: "Each direction's route and stops, the fare, hours and frequency, and the alerts Massar's team posts.",
+      s3Points: ['Strikes, detours, moved stops', 'Usual hours learned from past trips', 'Report a problem in two taps'],
+      grid: [
+        ['route', 'Trips with transfers', 'Pick a destination or long-press the map: Massar combines walking and buses.'],
+        ['bell', 'Trip alerts', '"Your bus is coming", "Next stop", "Get off now", even with the screen off.'],
+        ['widget', 'Home screen widget', 'The next buses at your stop without opening the app.'],
+        ['offline', 'Offline', 'Lines, stops and routes saved on your phone.'],
+        ['clock', 'Even with no bus live', 'First and last bus, usual frequency and fare of each line.'],
+        ['share', "Share the bus you're on", "If the driver doesn't share their bus, you can show it to others, anonymously."],
+        ['flag', 'Report a problem', "A bus that didn't come, a stop in the wrong place: your report reaches Massar's team."],
+        ['moon', 'Comfortable', 'Arabic, French and English, and a dark mode.'],
       ],
-      howTitle: "How does Massar work?",
-      howSubtitle: "A simple community system: drivers share, passengers benefit.",
-      step1Title: "Drivers share", step1Desc: "Drivers install Massar Driver and share their position during their shift. A passenger on board can also share the bus, anonymously.",
-      step2Title: "Massar displays", step2Desc: "The app shows live bus positions on an interactive map and calculates estimated arrival times.",
-      step3Title: "You plan ahead", step3Desc: "Know exactly when your bus arrives. No more pointless waiting at the stop.",
-      featuresTitle: "Everything you need", featuresSubtitle: "Features built for Algerian public transport users.",
-      f1Title: "Live Bus Tracking", f1Desc: "Watch buses move in real time on an interactive map using GPS data shared by drivers.",
-      f2Title: "Accurate ETAs", f2Desc: "Get real-time arrival estimates based on live driver GPS data.",
-      f3Title: "Routes & Stops", f3Desc: "View complete bus routes, stops, and directions for all available lines.",
-      f4Title: "Service Alerts", f4Desc: "Strikes, detours, moved stops: Massar's team posts alerts on the lines and stops concerned.",
-      f5Title: "Offline Access", f5Desc: "Lines, stops and routes are saved on your phone and stay available without a connection.",
-      f6Title: "Trilingual Interface", f6Desc: "Fully available in Arabic, French, and English for all Algerian users.",
-      citiesTitle: "Available in Cheria (Tébessa)",
-      citiesSubtitle: "More cities come as drivers join Massar.",
-      privacyBadge: "Full privacy protection",
-      privacyTitle1: "Your privacy,", privacyTitle2: "our priority",
-      privacyDesc: "No account, nothing that identifies you. Your location is used on your phone to find nearby stops; for a trip, it is sent to Massar only to compute it, and not kept.",
-      privacyPoints: ["No account, no personal identifier", "Location used for nearby stops and trips, never kept", "Sharing the bus you're on is optional and anonymous", "Anonymous problem reports", "Bus positions shared voluntarily"],
-      privacyLink: "Read our privacy policy",
-      privacyCards: [
-        { e: "🔒", t: "No account", d: "Nothing that identifies you" },
-        { e: "📡", t: "Community-powered", d: "Volunteer drivers and passengers" },
-        { e: "🗑️", t: "Nothing kept", d: "Positions never stored" },
-        { e: "📴", t: "Offline", d: "Lines and stops saved" }
+      howEyebrow: 'How it works', howTitle: 'Community-powered and simple', howLead: 'No devices in the buses: phones are enough.',
+      steps: [
+        ['Drivers share', 'During their shift, drivers run Massar Driver, which sends the bus position.'],
+        ['Massar computes', 'The server finds the direction, the position on the line and the arrival time at every stop.'],
+        ['You wait less', 'You see the bus coming and leave at the right time, or plan your trip.'],
       ],
-      disclaimerTitle: "Independent application",
-      disclaimerText: "Massar is an independent, community-supported application. It is not endorsed by, affiliated with, or connected to any Algerian government entity, municipal authority, or public transportation operator. Bus positions are shared voluntarily by drivers using Massar Driver, or by passengers on board who choose to.",
-      ctaTitle: "No more pointless waiting at bus stops",
-      ctaDesc: "Download Massar for free and start tracking your buses in real time today.",
-      ctaTrust: "Free · No account · In Arabic, French and English",
-      footerDesc: "Real-time community bus tracking for Algeria.",
-      footerLinks: "Links", footerContact: "Contact",
-      footerSite: "Website", footerPrivacy: "Privacy Policy",
-      footerDataSource: "How it works", footerPlay: "Google Play",
-      footerDisclaimer: "Independent app, not affiliated with any Algerian government entity.",
-      eta: "Arriving in", etaMin: "3 minutes",
-      nearby: "Nearby lines",
-      bus21dest: "Sog Labiod → El Jorf", bus36dest: "Trig Tebessa → Bus station"
+      whereEyebrow: 'Where', whereTitle: 'Available in Cheria (Tébessa)', line1: 'Sog Labiod ↔ El Jorf', line2: 'Trig Tebessa ↔ Bus station',
+      whereNote: 'More cities and lines come as drivers join Massar.',
+      driversTitle: 'Are you a bus driver?', driversText: 'Show your bus to the passengers waiting for it, and see how many follow you. Free, your phone is enough.', driversCta: 'Discover Massar Driver',
+      privacyEyebrow: 'Privacy', privacyTitle: "We don't know who you are, and that's the point", privacyLead: 'Massar is designed to work without collecting your data.',
+      privacy: [
+        ['lock', 'No account', 'No name, phone, email or device identifier.'],
+        ['pin', 'Your location stays yours', 'Used on your phone for nearby stops; for a trip, sent to compute it, then forgotten.'],
+        ['people', 'Optional sharing', "Sharing the bus you're on happens only if you agree, anonymously."],
+        ['trash', 'Nothing kept', 'Positions are not stored; reports are anonymous.'],
+      ],
+      privacyLink: 'Read the privacy policy',
+      disclaimerTitle: 'Independent app.', disclaimerText: 'Massar is a community app, not affiliated with any government entity, municipal authority or public transport operator. Bus positions are shared voluntarily by drivers using Massar Driver, or by passengers on board who choose to.',
+      footerTagline: 'Community bus tracking in Algeria.', footerPrivacy: 'Privacy', footerTerms: 'Terms of use',
     },
-    ar: {
-      driversCta: "كن سائقًا في مسار",
-      driversDesc: "ثبّت تطبيق Massar Driver واختر خطك وشارك موقعك أثناء العمل. يرى ركابك الحافلة قادمة، وترى كم منهم يتابعك.",
-      driversTitle: "هل أنت سائق حافلة؟",
-      driversBadge: "مسار السائق",
-      footerTerms: "شروط الاستخدام",
-      footerDrivers: "للسائقين",
-      citiesMore: "قريبًا في مدن أخرى",
-      f10Desc: "حافلة لم تأتِ، محطة في مكان خاطئ، معلومة غير صحيحة: أبلغ عنها بلمستين، دون كشف هويتك.",
-      f10Title: "الإبلاغ عن مشكلة",
-      f9Desc: "الحافلات القادمة إلى محطتك مباشرةً على الشاشة الرئيسية لهاتفك.",
-      f9Title: "أداة الشاشة الرئيسية",
-      f8Desc: "مواعيد كل خط وتواتره المعتاد وتعريفته، مستخلصة من الرحلات السابقة أو يحددها فريق مسار.",
-      f8Title: "حتى دون حافلة مباشرة",
-      f7Desc: "اختر وجهتك: يجمع مسار بين المشي والحافلات مع تغيير الحافلة، وينبّهك قبل محطتك حتى والشاشة مطفأة.",
-      f7Title: "رحلات مع تغيير الحافلة",
-      dir: "rtl", font: "'Cairo', system-ui, sans-serif",
-      navSite: "massar-dz.com", navDownload: "تحميل",
-      badge: "تطبيق مجتمعي لتتبع الحافلات في الجزائر",
-      heroTitle1: "تتبّع حافلتك", heroTitle2: "في الوقت الفعلي",
-      heroDesc: "مسار تطبيق مجتمعي يساعد المسافرين الجزائريين على تتبع الحافلات العامة في الوقت الفعلي، وتقليل وقت الانتظار والتخطيط لرحلاتهم بذكاء.",
-      downloadOn: "تحميل من", android: "أندرويد · مجاني", iosSoon: "أندرويد 7 أو أحدث",
-      stats: [
-        { val: "100%", lbl: "مجاني" }, { val: "3", lbl: "لغات" }, { val: "0", lbl: "حساب مطلوب" }, { val: "مباشر", lbl: "مواقع الحافلات" }
-      ],
-      howTitle: "كيف يعمل مسار؟",
-      howSubtitle: "نظام مجتمعي بسيط: السائقون يشاركون، والمسافرون يستفيدون.",
-      step1Title: "السائقون يشاركون", step1Desc: "يثبّت السائقون تطبيق Massar Driver ويشاركون موقعهم أثناء العمل. ويمكن لراكب على متن الحافلة أن يشاركها أيضًا، دون كشف هويته.",
-      step2Title: "مسار يعرض", step2Desc: "يعرض التطبيق مواقع الحافلات في الوقت الفعلي على خريطة تفاعلية ويحسب أوقات الوصول.",
-      step3Title: "أنت تخطّط", step3Desc: "اعرف بالضبط متى تصل حافلتك. وداعًا للانتظار الطويل في المحطات.",
-      featuresTitle: "كل ما تحتاجه", featuresSubtitle: "ميزات مصممة خصيصًا لمستخدمي النقل العام في الجزائر.",
-      f1Title: "تتبع مباشر للحافلات", f1Desc: "شاهد الحافلات وهي تتحرك في الوقت الفعلي على خريطة تفاعلية بفضل بيانات GPS من السائقين.",
-      f2Title: "أوقات وصول دقيقة", f2Desc: "احصل على تقديرات وصول فورية مبنية على بيانات GPS الحية للسائقين.",
-      f3Title: "الخطوط والمحطات", f3Desc: "اطّلع على كامل مسارات الحافلات والمحطات والاتجاهات لجميع الخطوط المتاحة.",
-      f4Title: "تنبيهات الخدمة", f4Desc: "إضرابات، تحويلات، محطات منقولة: ينشر فريق مسار التنبيهات على الخطوط والمحطات المعنية.",
-      f5Title: "وصول بلا إنترنت", f5Desc: "تُحفظ الخطوط والمحطات والمسارات على هاتفك وتبقى متاحة دون اتصال.",
-      f6Title: "واجهة ثلاثية اللغات", f6Desc: "متوفر بالكامل بالعربية والفرنسية والإنجليزية لجميع المستخدمين الجزائريين.",
-      citiesTitle: "متوفر في الشريعة (تبسة)",
-      citiesSubtitle: "تنضم مدن أخرى كلما انضم سائقون إلى مسار.",
-      privacyBadge: "حماية كاملة للخصوصية",
-      privacyTitle1: "خصوصيتك،", privacyTitle2: "أولويتنا",
-      privacyDesc: "بلا حساب ولا شيء يعرّف بك. يُستخدم موقعك على هاتفك لإيجاد المحطات القريبة؛ ولحساب رحلة يُرسل إلى مسار لهذا الغرض فقط ولا يُحفظ.",
-      privacyPoints: ["بلا حساب ولا معرّف شخصي", "الموقع للمحطات القريبة والرحلات فقط، ولا يُحفظ أبدًا", "مشاركة الحافلة التي تركبها اختيارية ودون كشف الهوية", "بلاغات مجهولة الهوية", "مواقع الحافلات مشاركة طوعًا"],
-      privacyLink: "اقرأ سياسة الخصوصية",
-      privacyCards: [
-        { e: "🔒", t: "بلا حساب", d: "لا شيء يعرّف بك" },
-        { e: "📡", t: "مجتمعي", d: "سائقون وركاب متطوعون" },
-        { e: "🗑️", t: "لا شيء يُحفظ", d: "المواقع لا تُخزَّن" },
-        { e: "📴", t: "دون اتصال", d: "خطوط ومحطات محفوظة" }
-      ],
-      disclaimerTitle: "تطبيق مستقل",
-      disclaimerText: "مسار تطبيق مجتمعي مستقل. لا يتبع أي جهة حكومية جزائرية أو سلطة بلدية أو مشغّل نقل عام، ولا يحمل موافقتها. يشارك مواقع الحافلات طوعًا السائقون عبر تطبيق Massar Driver، أو ركاب على متنها يختارون ذلك.",
-      ctaTitle: "وداعًا للانتظار الطويل في المحطات",
-      ctaDesc: "حمّل مسار مجانًا وابدأ تتبع حافلاتك في الوقت الفعلي اليوم.",
-      ctaTrust: "مجاني · بلا حساب · بالعربية والفرنسية والإنجليزية",
-      footerDesc: "تتبع مجتمعي للحافلات في الوقت الفعلي بالجزائر.",
-      footerLinks: "روابط", footerContact: "تواصل معنا",
-      footerSite: "الموقع الإلكتروني", footerPrivacy: "سياسة الخصوصية",
-      footerDataSource: "كيف يعمل", footerPlay: "Google Play",
-      footerDisclaimer: "تطبيق مستقل غير تابع لأي جهة حكومية جزائرية.",
-      eta: "وصول خلال", etaMin: "3 دقائق",
-      nearby: "الخطوط القريبة",
-      bus21dest: "السوق الأبيض ← الجرف", bus36dest: "طريق تبسة ← المحطة البرية"
-    }
   };
 
-  // ─── ENGINE ─────────────────────────────────────────────────────────────────
-  let currentLang = "fr";
+  const esc = (t) => t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-  function applyLang(lang) {
-    currentLang = lang;
-    const t = i18n[lang];
-    const html = document.documentElement;
-
-    // RTL / font
-    html.setAttribute("dir", t.dir);
-    html.setAttribute("lang", lang);
-    document.body.classList.toggle("rtl", t.dir === "rtl");
-    document.body.style.fontFamily = t.font;
-
-    // All simple text nodes
-    document.querySelectorAll("[data-i18n]").forEach(el => {
-      const key = el.getAttribute("data-i18n");
-      if (t[key] !== undefined) el.textContent = t[key];
+  function apply(lang) {
+    const t = i18n[lang] || i18n.ar;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = t.dir;
+    document.title = t.title;
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const v = t[el.dataset.i18n];
+      if (typeof v === 'string') el.textContent = v;
     });
-
-    // Active button
-    document.querySelectorAll(".lang-btn").forEach(btn => {
-      btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
+    document.querySelectorAll('[data-list]').forEach((el) => {
+      el.innerHTML = (t[el.dataset.list] || []).map((p) => `<li>${esc(p)}</li>`).join('');
     });
-
-    // Stats
-    const statsEl = document.getElementById("hero-stats");
-    statsEl.innerHTML = t.stats.map(s => `
-      <div>
-        <div class="stat-val">${s.val}</div>
-        <div class="stat-lbl">${s.lbl}</div>
-      </div>
-    `).join("");
-
-    // Privacy list
-    const listEl = document.getElementById("privacy-list");
-    listEl.innerHTML = t.privacyPoints.map(p => `
-      <li>
-        <span class="check-icon">
-          <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-        </span>
-        ${p}
-      </li>
-    `).join("");
-
-    // Privacy cards
-    const cardsEl = document.getElementById("privacy-cards");
-    cardsEl.innerHTML = t.privacyCards.map(c => `
-      <div class="privacy-card">
-        <div class="p-emoji">${c.e}</div>
-        <h4>${c.t}</h4>
-        <p>${c.d}</p>
-      </div>
-    `).join("");
-
-    // Save preference
-    localStorage.setItem("massar-lang", lang);
+    // Screenshots of the app in the page's language.
+    document.querySelectorAll('[data-shot]').forEach((img) => {
+      img.src = `assets/screens/${lang}-${img.dataset.shot}.webp`;
+    });
+    document.getElementById('feature-grid').innerHTML = t.grid.map(([i, h, p]) =>
+      `<div class="card"><div class="icon">${svg(i)}</div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
+    document.getElementById('steps').innerHTML = t.steps.map(([h, p]) =>
+      `<div class="step"><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
+    document.getElementById('privacy-grid').innerHTML = t.privacy.map(([i, h, p]) =>
+      `<div class="card"><div class="icon">${svg(i)}</div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
+    document.querySelectorAll('.langs button').forEach((b) => b.classList.toggle('active', b.dataset.lang === lang));
+    // The Play Store page in the same language.
+    document.querySelectorAll('.play-link').forEach((a) => {
+      a.href = `https://play.google.com/store/apps/details?id=dz.massar.ys&hl=${lang}`;
+    });
+    try { localStorage.setItem('massar_lang', lang); } catch (_) {}
   }
 
-  // Language buttons
-  document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.addEventListener("click", () => applyLang(btn.getAttribute("data-lang")));
-  });
-
-  // Navbar scroll effect
-  window.addEventListener("scroll", () => {
-    document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 20);
-  });
-
-  // Init — restore saved preference
-  const saved = localStorage.getItem("massar-lang");
-  applyLang(saved && i18n[saved] ? saved : "fr");
+  document.querySelectorAll('.langs button').forEach((b) => b.addEventListener('click', () => apply(b.dataset.lang)));
+  const params = new URLSearchParams(location.search);
+  let saved = null;
+  try { saved = localStorage.getItem('massar_lang'); } catch (_) {}
+  const browser = (navigator.language || 'ar').slice(0, 2);
+  apply([params.get('lang'), saved, browser].find((l) => l && i18n[l]) || 'ar');
 </script>
 </body>
 </html>
