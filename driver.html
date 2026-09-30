@@ -171,8 +171,8 @@
     <a class="brand" href="index.html"><img src="assets/logo.png" alt="" width="28" height="28" />Massar</a>
     <div class="foot-links">
       <a href="index.html" data-i18n="forPassengers"></a>
-      <a href="terms-and-conditions.html" data-i18n="footerTerms"></a>
-      <a href="mailto:drivers@massar-dz.com" dir="ltr">drivers@massar-dz.com</a>
+      <a href="terms-and-conditions.html" data-legal="terms-and-conditions" data-i18n="footerTerms"></a>
+      <a href="mailto:drivers@massarapp.com" dir="ltr">drivers@massarapp.com</a>
     </div>
   </div>
 </footer>
@@ -182,7 +182,7 @@
   // passing the invitation code, which the app fills in at sign-up (install referrer).
   const PLAY_PUBLISHED = false;
   const PLAY_URL = 'https://play.google.com/store/apps/details?id=dz.massar_driver.ys';
-  const CONTACT = 'drivers@massar-dz.com';
+  const CONTACT = 'drivers@massarapp.com';
 
   const ICONS = {
     eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
@@ -246,6 +246,8 @@
   function apply(lang) {
     const t = i18n[lang] || i18n.ar;
     document.documentElement.lang = lang;
+    // Legal pages exist in the three languages: <page>.html (English), <page>-fr.html, <page>-ar.html.
+    document.querySelectorAll('[data-legal]').forEach((el) => { el.href = el.dataset.legal + (lang === 'en' ? '' : '-' + lang) + '.html'; });
     document.documentElement.dir = t.dir;
     document.title = t.title;
     document.querySelectorAll('[data-i18n]').forEach((el) => {
