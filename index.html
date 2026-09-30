@@ -45,6 +45,15 @@
 
     html { scroll-behavior: smooth; }
 
+    /* Drivers section and "more soon" city tag */
+    .drivers-section { padding: 64px 0; background: linear-gradient(135deg, #ecfdf5, #eff6ff); }
+    .drivers-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .drivers-inner h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; color: var(--gray-900); margin: 8px 0; }
+    .drivers-inner p { color: var(--gray-600); max-width: 640px; }
+    .drivers-badge { display: inline-block; background: #d1fae5; color: #065f46; font-weight: 700; font-size: .8rem; padding: 4px 12px; border-radius: 999px; }
+    .drivers-cta { white-space: nowrap; }
+    .city-tag-soon { opacity: .7; border-style: dashed; }
+
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background: #fff;
@@ -688,15 +697,15 @@
               <div class="phone-eta">
                 <div class="eta-dot"></div>
                 <div>
-                  <div class="eta-label">Bus 21 · <span data-i18n="eta"></span></div>
+                  <div class="eta-label">Bus 1 · <span data-i18n="eta"></span></div>
                   <div class="eta-val" data-i18n="etaMin"></div>
                 </div>
               </div>
             </div>
             <div class="phone-bar">
               <div class="phone-bar-title" data-i18n="nearby"></div>
-              <div class="phone-line"><span class="line-num">21</span><span class="line-dest" data-i18n="bus21dest"></span></div>
-              <div class="phone-line"><span class="line-num">36</span><span class="line-dest" data-i18n="bus36dest"></span></div>
+              <div class="phone-line"><span class="line-num">1</span><span class="line-dest" data-i18n="bus21dest"></span></div>
+              <div class="phone-line"><span class="line-num">2</span><span class="line-dest" data-i18n="bus36dest"></span></div>
             </div>
           </div>
         </div>
@@ -711,7 +720,7 @@
 </section>
 
 <!-- HOW IT WORKS -->
-<section>
+<section id="how">
   <div class="container">
     <div class="section-header">
       <h2 data-i18n="howTitle"></h2>
@@ -784,6 +793,22 @@
         <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
         <h3 data-i18n="f6Title"></h3><p data-i18n="f6Desc"></p>
       </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg></div>
+        <h3 data-i18n="f7Title"></h3><p data-i18n="f7Desc"></p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <h3 data-i18n="f8Title"></h3><p data-i18n="f8Desc"></p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+        <h3 data-i18n="f9Title"></h3><p data-i18n="f9Desc"></p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
+        <h3 data-i18n="f10Title"></h3><p data-i18n="f10Desc"></p>
+      </div>
     </div>
   </div>
 </section>
@@ -793,12 +818,8 @@
   <div class="container">
     <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;color:var(--gray-900)" data-i18n="citiesTitle"></h2>
     <div class="cities-tags">
-      <span class="city-tag">Alger / الجزائر</span>
-      <span class="city-tag">Oran / وهران</span>
-      <span class="city-tag">Constantine / قسنطينة</span>
-      <span class="city-tag">Annaba / عنابة</span>
-      <span class="city-tag">Sétif / سطيف</span>
-      <span class="city-tag">Blida / البليدة</span>
+      <span class="city-tag">Cheria / الشريعة</span>
+      <span class="city-tag city-tag-soon" data-i18n="citiesMore"></span>
     </div>
     <p class="cities-note" data-i18n="citiesSubtitle"></p>
   </div>
@@ -816,7 +837,7 @@
         <p class="privacy-title"><span data-i18n="privacyTitle1"></span><br><span data-i18n="privacyTitle2"></span></p>
         <p class="privacy-desc" data-i18n="privacyDesc"></p>
         <ul class="privacy-list" id="privacy-list"></ul>
-        <a href="https://massar-dz.com/privacy" target="_blank" rel="noopener noreferrer" class="privacy-link">
+        <a href="https://my-transit-api.onrender.com/privacy-policy" target="_blank" rel="noopener noreferrer" class="privacy-link">
           <span data-i18n="privacyLink"></span>
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
         </a>
@@ -836,6 +857,18 @@
     </div>
   </div>
 </div>
+
+<!-- DRIVERS -->
+<section class="drivers-section" id="drivers">
+  <div class="container drivers-inner">
+    <div>
+      <span class="drivers-badge" data-i18n="driversBadge"></span>
+      <h2 data-i18n="driversTitle"></h2>
+      <p data-i18n="driversDesc"></p>
+    </div>
+    <a class="btn-primary drivers-cta" href="driver.html" data-i18n="driversCta"></a>
+  </div>
+</section>
 
 <!-- CTA -->
 <section class="cta-section">
@@ -872,8 +905,10 @@
       <div class="footer-col">
         <h4 data-i18n="footerLinks"></h4>
         <a href="https://massar-dz.com" target="_blank" rel="noopener noreferrer" data-i18n="footerSite"></a>
-        <a href="https://massar-dz.com/privacy" target="_blank" rel="noopener noreferrer" data-i18n="footerPrivacy"></a>
-        <a href="https://massar-dz.com/data-source" target="_blank" rel="noopener noreferrer" data-i18n="footerDataSource"></a>
+        <a href="https://my-transit-api.onrender.com/privacy-policy" target="_blank" rel="noopener noreferrer" data-i18n="footerPrivacy"></a>
+        <a href="#how" data-i18n="footerDataSource"></a>
+        <a href="driver.html" data-i18n="footerDrivers"></a>
+        <a href="https://my-transit-api.onrender.com/terms-and-conditions" target="_blank" rel="noopener noreferrer" data-i18n="footerTerms"></a>
         <a href="https://play.google.com/store/apps/details?id=dz.massar.ys" target="_blank" rel="noopener noreferrer" data-i18n="footerPlay"></a>
       </div>
       <div class="footer-col">
@@ -891,154 +926,196 @@
   // ─── TRANSLATIONS ───────────────────────────────────────────────────────────
   const i18n = {
     fr: {
+      driversCta: "Devenir chauffeur Massar",
+      driversDesc: "Installez Massar Driver, choisissez votre ligne et partagez votre position pendant le service. Vos passagers voient le bus arriver, et vous voyez combien vous suivent.",
+      driversTitle: "Vous êtes chauffeur de bus ?",
+      driversBadge: "Massar Driver",
+      footerTerms: "Conditions d'utilisation",
+      footerDrivers: "Pour les chauffeurs",
+      citiesMore: "Bientôt ailleurs",
+      f10Desc: "Bus qui ne vient pas, arrêt mal placé, information erronée : signalez-le en deux gestes, anonymement.",
+      f10Title: "Signaler un problème",
+      f9Desc: "Les prochains bus de votre arrêt, directement sur l'écran d'accueil de votre téléphone.",
+      f9Title: "Widget d'écran d'accueil",
+      f8Desc: "Horaires, fréquence habituelle et tarif de chaque ligne, appris des trajets passés ou donnés par l'équipe Massar.",
+      f8Title: "Même sans bus en direct",
+      f7Desc: "Choisissez une destination : Massar combine marche et bus, avec correspondances, et vous prévient avant votre arrêt, même écran éteint.",
+      f7Title: "Itinéraires avec correspondances",
       dir: "ltr", font: "'Inter', system-ui, sans-serif",
       navSite: "massar-dz.com", navDownload: "Télécharger",
       badge: "Suivi de bus communautaire en Algérie",
       heroTitle1: "Suivez votre bus", heroTitle2: "en temps réel",
       heroDesc: "Massar est une application communautaire qui permet aux passagers algériens de suivre les bus en temps réel, réduire l'attente et planifier leurs trajets.",
-      downloadOn: "Télécharger sur", android: "Android · Gratuit", iosSoon: "iOS à venir prochainement",
+      downloadOn: "Télécharger sur", android: "Android · Gratuit", iosSoon: "Android 7 ou plus récent",
       stats: [
-        { val: "100%", lbl: "Gratuit" }, { val: "3", lbl: "Langues supportées" },
-        { val: "0", lbl: "Données passagers collectées" }, { val: "Temps réel", lbl: "GPS des chauffeurs" }
+        { val: "100%", lbl: "Gratuit" }, { val: "3", lbl: "Langues" }, { val: "0", lbl: "Compte nécessaire" }, { val: "Direct", lbl: "Position des bus" }
       ],
       howTitle: "Comment fonctionne Massar ?",
       howSubtitle: "Un système communautaire simple : les chauffeurs partagent, les passagers profitent.",
-      step1Title: "Les chauffeurs partagent", step1Desc: "Les chauffeurs installent l'application Massar Driver et partagent leur position GPS pendant leur service.",
+      step1Title: "Les chauffeurs partagent", step1Desc: "Les chauffeurs installent Massar Driver et partagent leur position pendant leur service. Un passager à bord peut aussi partager le bus, anonymement.",
       step2Title: "Massar affiche", step2Desc: "L'application affiche les positions des bus en temps réel sur la carte et calcule les temps d'arrivée.",
       step3Title: "Vous planifiez", step3Desc: "Vous savez exactement quand votre bus arrive. Fini l'attente inutile aux arrêts.",
       featuresTitle: "Tout ce dont vous avez besoin", featuresSubtitle: "Des fonctionnalités pensées pour les usagers des transports en commun algériens.",
       f1Title: "Suivi en Temps Réel", f1Desc: "Voir les bus se déplacer en temps réel sur une carte interactive grâce aux données GPS partagées par les chauffeurs.",
       f2Title: "Temps d'Arrivée Précis", f2Desc: "Obtenez des estimations d'arrivée en temps réel basées sur les données GPS des chauffeurs.",
       f3Title: "Lignes & Arrêts", f3Desc: "Consultez les trajets complets, les arrêts et les directions pour toutes les lignes disponibles.",
-      f4Title: "Alertes de Service", f4Desc: "Recevez des notifications sur les retards ou perturbations signalés par les chauffeurs.",
-      f5Title: "Accès Hors Ligne", f5Desc: "Enregistrez vos lignes favorites et consultez-les sans connexion internet.",
+      f4Title: "Alertes de Service", f4Desc: "Grèves, déviations, arrêts déplacés : l'équipe Massar publie les alertes sur les lignes et les arrêts concernés.",
+      f5Title: "Accès Hors Ligne", f5Desc: "Lignes, arrêts et tracés sont enregistrés sur votre téléphone et restent consultables sans connexion.",
       f6Title: "Interface Trilingue", f6Desc: "Disponible en arabe, français et anglais pour tous les usagers algériens.",
-      citiesTitle: "Disponible dans les grandes villes d'Algérie",
-      citiesSubtitle: "Et d'autres villes en cours d'expansion grâce à la communauté de chauffeurs Massar.",
+      citiesTitle: "Disponible à Cheria (Tébessa)",
+      citiesSubtitle: "D'autres villes arrivent à mesure que des chauffeurs rejoignent Massar.",
       privacyBadge: "Respect total de la vie privée",
       privacyTitle1: "Votre vie privée,", privacyTitle2: "notre priorité",
-      privacyDesc: "Massar ne collecte aucune donnée personnelle sur les passagers. Aucune permission de localisation n'est requise.",
-      privacyPoints: ["Aucun suivi des passagers", "Aucune donnée personnelle collectée", "Données GPS uniquement des chauffeurs volontaires", "Pas de processus en arrière-plan — économise la batterie", "Source des données transparente et clairement indiquée"],
+      privacyDesc: "Pas de compte, rien qui vous identifie. Votre position sert sur votre téléphone à trouver les arrêts proches ; pour un itinéraire, elle est envoyée à Massar le temps du calcul, sans être conservée.",
+      privacyPoints: ["Aucun compte, aucun identifiant personnel", "Position utilisée pour les arrêts proches et les itinéraires, jamais conservée", "Partager le bus où vous êtes est facultatif et anonyme", "Signalements anonymes", "Positions des bus partagées volontairement"],
       privacyLink: "Lire notre politique de confidentialité",
       privacyCards: [
-        { e: "🔒", t: "Zéro collecte", d: "Aucune donnée passager" },
-        { e: "📡", t: "Communautaire", d: "Données chauffeurs volontaires" },
-        { e: "🔋", t: "Économe", d: "Pas de processus en arrière-plan" },
-        { e: "📴", t: "Hors ligne", d: "Lignes sauvegardées disponibles" }
+        { e: "🔒", t: "Sans compte", d: "Rien qui vous identifie" },
+        { e: "📡", t: "Communautaire", d: "Chauffeurs et passagers volontaires" },
+        { e: "🗑️", t: "Rien de conservé", d: "Positions jamais stockées" },
+        { e: "📴", t: "Hors ligne", d: "Lignes et arrêts enregistrés" }
       ],
       disclaimerTitle: "Application indépendante",
-      disclaimerText: "Massar est une application communautaire indépendante. Elle n'est pas affiliée à une entité gouvernementale algérienne, une autorité municipale, ou un opérateur de transport en commun. Les données de localisation des bus sont fournies uniquement par les chauffeurs participants via l'application Massar Driver.",
+      disclaimerText: "Massar est une application communautaire indépendante. Elle n'est pas affiliée à une entité gouvernementale algérienne, une autorité municipale ou un opérateur de transport en commun. Les positions des bus sont partagées volontairement par les chauffeurs via Massar Driver, ou par des passagers à bord qui le choisissent.",
       ctaTitle: "Fini l'attente inutile aux arrêts",
       ctaDesc: "Téléchargez Massar gratuitement et commencez à suivre vos bus en temps réel dès aujourd'hui.",
-      ctaTrust: "Gratuit · Sans publicités intrusives · Aucune donnée personnelle collectée",
+      ctaTrust: "Gratuit · Sans compte · En arabe, français et anglais",
       footerDesc: "Suivi de bus communautaire en temps réel pour l'Algérie.",
       footerLinks: "Liens", footerContact: "Contact",
       footerSite: "Site web", footerPrivacy: "Politique de confidentialité",
-      footerDataSource: "Source des données", footerPlay: "Google Play",
+      footerDataSource: "Comment ça marche", footerPlay: "Google Play",
       footerDisclaimer: "Application indépendante, non affiliée à une entité gouvernementale algérienne.",
       eta: "Arrivée dans", etaMin: "3 minutes",
       nearby: "Lignes à proximité",
-      bus21dest: "Hussein Dey → Alger Centre", bus36dest: "Bachdjarah → Place de Martyrs"
+      bus21dest: "Sog Labiod → El Jorf", bus36dest: "Trig Tebessa → Gare routière"
     },
     en: {
+      driversCta: "Become a Massar driver",
+      driversDesc: "Install Massar Driver, pick your line and share your position during your shift. Your passengers see the bus coming, and you see how many follow you.",
+      driversTitle: "Are you a bus driver?",
+      driversBadge: "Massar Driver",
+      footerTerms: "Terms of use",
+      footerDrivers: "For drivers",
+      citiesMore: "More soon",
+      f10Desc: "A bus that didn't come, a stop in the wrong place, wrong information: report it in two taps, anonymously.",
+      f10Title: "Report a problem",
+      f9Desc: "The next buses at your stop, right on your phone's home screen.",
+      f9Title: "Home screen widget",
+      f8Desc: "Hours, usual frequency and fare of each line, learned from past trips or set by Massar's team.",
+      f8Title: "Even with no bus live",
+      f7Desc: "Pick a destination: Massar combines walking and buses, with transfers, and alerts you before your stop, even with the screen off.",
+      f7Title: "Trips with transfers",
       dir: "ltr", font: "'Inter', system-ui, sans-serif",
       navSite: "massar-dz.com", navDownload: "Download",
       badge: "Community bus tracker for Algeria",
       heroTitle1: "Track your bus", heroTitle2: "in real time",
       heroDesc: "Massar is a community-powered app that helps Algerian commuters track public buses in real time, reduce waiting time, and plan smarter trips.",
-      downloadOn: "Get it on", android: "Android · Free", iosSoon: "iOS coming soon",
+      downloadOn: "Get it on", android: "Android · Free", iosSoon: "Android 7 or newer",
       stats: [
-        { val: "100%", lbl: "Free" }, { val: "3", lbl: "Languages supported" },
-        { val: "0", lbl: "Passenger data collected" }, { val: "Real-time", lbl: "Driver GPS data" }
+        { val: "100%", lbl: "Free" }, { val: "3", lbl: "Languages" }, { val: "0", lbl: "Account needed" }, { val: "Live", lbl: "Bus positions" }
       ],
       howTitle: "How does Massar work?",
       howSubtitle: "A simple community system: drivers share, passengers benefit.",
-      step1Title: "Drivers share", step1Desc: "Drivers install the Massar Driver companion app and share their GPS location during their active shifts.",
+      step1Title: "Drivers share", step1Desc: "Drivers install Massar Driver and share their position during their shift. A passenger on board can also share the bus, anonymously.",
       step2Title: "Massar displays", step2Desc: "The app shows live bus positions on an interactive map and calculates estimated arrival times.",
       step3Title: "You plan ahead", step3Desc: "Know exactly when your bus arrives. No more pointless waiting at the stop.",
       featuresTitle: "Everything you need", featuresSubtitle: "Features built for Algerian public transport users.",
       f1Title: "Live Bus Tracking", f1Desc: "Watch buses move in real time on an interactive map using GPS data shared by drivers.",
       f2Title: "Accurate ETAs", f2Desc: "Get real-time arrival estimates based on live driver GPS data.",
       f3Title: "Routes & Stops", f3Desc: "View complete bus routes, stops, and directions for all available lines.",
-      f4Title: "Service Alerts", f4Desc: "Receive notifications about delays or disruptions reported by drivers.",
-      f5Title: "Offline Access", f5Desc: "Save your favorite routes and view them without an internet connection.",
+      f4Title: "Service Alerts", f4Desc: "Strikes, detours, moved stops: Massar's team posts alerts on the lines and stops concerned.",
+      f5Title: "Offline Access", f5Desc: "Lines, stops and routes are saved on your phone and stay available without a connection.",
       f6Title: "Trilingual Interface", f6Desc: "Fully available in Arabic, French, and English for all Algerian users.",
-      citiesTitle: "Available across major Algerian cities",
-      citiesSubtitle: "And expanding to more cities thanks to the Massar driver community.",
+      citiesTitle: "Available in Cheria (Tébessa)",
+      citiesSubtitle: "More cities come as drivers join Massar.",
       privacyBadge: "Full privacy protection",
       privacyTitle1: "Your privacy,", privacyTitle2: "our priority",
-      privacyDesc: "Massar collects no personal data from passengers. No location permission is required. Only GPS data voluntarily shared by drivers is used.",
-      privacyPoints: ["No passenger tracking", "No personal data collected", "GPS data from volunteer drivers only", "No background processes — battery friendly", "Data source transparent and clearly labeled"],
+      privacyDesc: "No account, nothing that identifies you. Your location is used on your phone to find nearby stops; for a trip, it is sent to Massar only to compute it, and not kept.",
+      privacyPoints: ["No account, no personal identifier", "Location used for nearby stops and trips, never kept", "Sharing the bus you're on is optional and anonymous", "Anonymous problem reports", "Bus positions shared voluntarily"],
       privacyLink: "Read our privacy policy",
       privacyCards: [
-        { e: "🔒", t: "Zero collection", d: "No passenger data" },
-        { e: "📡", t: "Community-powered", d: "Volunteer driver data" },
-        { e: "🔋", t: "Battery friendly", d: "No background processes" },
-        { e: "📴", t: "Offline access", d: "Saved routes available" }
+        { e: "🔒", t: "No account", d: "Nothing that identifies you" },
+        { e: "📡", t: "Community-powered", d: "Volunteer drivers and passengers" },
+        { e: "🗑️", t: "Nothing kept", d: "Positions never stored" },
+        { e: "📴", t: "Offline", d: "Lines and stops saved" }
       ],
       disclaimerTitle: "Independent application",
-      disclaimerText: "Massar is an independent, community-supported application. It is not endorsed by, affiliated with, or connected to any Algerian government entity, municipal authority, or public transportation operator. Bus location data is provided solely by participating drivers using the Massar Driver app.",
+      disclaimerText: "Massar is an independent, community-supported application. It is not endorsed by, affiliated with, or connected to any Algerian government entity, municipal authority, or public transportation operator. Bus positions are shared voluntarily by drivers using Massar Driver, or by passengers on board who choose to.",
       ctaTitle: "No more pointless waiting at bus stops",
       ctaDesc: "Download Massar for free and start tracking your buses in real time today.",
-      ctaTrust: "Free · No intrusive ads · No personal data collected",
+      ctaTrust: "Free · No account · In Arabic, French and English",
       footerDesc: "Real-time community bus tracking for Algeria.",
       footerLinks: "Links", footerContact: "Contact",
       footerSite: "Website", footerPrivacy: "Privacy Policy",
-      footerDataSource: "Data Source", footerPlay: "Google Play",
+      footerDataSource: "How it works", footerPlay: "Google Play",
       footerDisclaimer: "Independent app, not affiliated with any Algerian government entity.",
       eta: "Arriving in", etaMin: "3 minutes",
       nearby: "Nearby lines",
-      bus21dest: "Hussein Dey → Alger Centre", bus36dest: "Bachdjarah → Place de Martyrs"
+      bus21dest: "Sog Labiod → El Jorf", bus36dest: "Trig Tebessa → Bus station"
     },
     ar: {
+      driversCta: "كن سائقًا في مسار",
+      driversDesc: "ثبّت تطبيق Massar Driver واختر خطك وشارك موقعك أثناء العمل. يرى ركابك الحافلة قادمة، وترى كم منهم يتابعك.",
+      driversTitle: "هل أنت سائق حافلة؟",
+      driversBadge: "مسار السائق",
+      footerTerms: "شروط الاستخدام",
+      footerDrivers: "للسائقين",
+      citiesMore: "قريبًا في مدن أخرى",
+      f10Desc: "حافلة لم تأتِ، محطة في مكان خاطئ، معلومة غير صحيحة: أبلغ عنها بلمستين، دون كشف هويتك.",
+      f10Title: "الإبلاغ عن مشكلة",
+      f9Desc: "الحافلات القادمة إلى محطتك مباشرةً على الشاشة الرئيسية لهاتفك.",
+      f9Title: "أداة الشاشة الرئيسية",
+      f8Desc: "مواعيد كل خط وتواتره المعتاد وتعريفته، مستخلصة من الرحلات السابقة أو يحددها فريق مسار.",
+      f8Title: "حتى دون حافلة مباشرة",
+      f7Desc: "اختر وجهتك: يجمع مسار بين المشي والحافلات مع تغيير الحافلة، وينبّهك قبل محطتك حتى والشاشة مطفأة.",
+      f7Title: "رحلات مع تغيير الحافلة",
       dir: "rtl", font: "'Cairo', system-ui, sans-serif",
       navSite: "massar-dz.com", navDownload: "تحميل",
       badge: "تطبيق مجتمعي لتتبع الحافلات في الجزائر",
       heroTitle1: "تتبّع حافلتك", heroTitle2: "في الوقت الفعلي",
       heroDesc: "مسار تطبيق مجتمعي يساعد المسافرين الجزائريين على تتبع الحافلات العامة في الوقت الفعلي، وتقليل وقت الانتظار والتخطيط لرحلاتهم بذكاء.",
-      downloadOn: "تحميل من", android: "أندرويد · مجاني", iosSoon: "iOS قريبًا",
+      downloadOn: "تحميل من", android: "أندرويد · مجاني", iosSoon: "أندرويد 7 أو أحدث",
       stats: [
-        { val: "100%", lbl: "مجاني" }, { val: "3", lbl: "لغات مدعومة" },
-        { val: "0", lbl: "بيانات مسافرين مجمّعة" }, { val: "مباشر", lbl: "بيانات GPS السائقين" }
+        { val: "100%", lbl: "مجاني" }, { val: "3", lbl: "لغات" }, { val: "0", lbl: "حساب مطلوب" }, { val: "مباشر", lbl: "مواقع الحافلات" }
       ],
       howTitle: "كيف يعمل مسار؟",
       howSubtitle: "نظام مجتمعي بسيط: السائقون يشاركون، والمسافرون يستفيدون.",
-      step1Title: "السائقون يشاركون", step1Desc: "يقوم السائقون بتثبيت تطبيق Massar Driver ومشاركة موقعهم عبر GPS خلال ساعات العمل.",
+      step1Title: "السائقون يشاركون", step1Desc: "يثبّت السائقون تطبيق Massar Driver ويشاركون موقعهم أثناء العمل. ويمكن لراكب على متن الحافلة أن يشاركها أيضًا، دون كشف هويته.",
       step2Title: "مسار يعرض", step2Desc: "يعرض التطبيق مواقع الحافلات في الوقت الفعلي على خريطة تفاعلية ويحسب أوقات الوصول.",
       step3Title: "أنت تخطّط", step3Desc: "اعرف بالضبط متى تصل حافلتك. وداعًا للانتظار الطويل في المحطات.",
       featuresTitle: "كل ما تحتاجه", featuresSubtitle: "ميزات مصممة خصيصًا لمستخدمي النقل العام في الجزائر.",
       f1Title: "تتبع مباشر للحافلات", f1Desc: "شاهد الحافلات وهي تتحرك في الوقت الفعلي على خريطة تفاعلية بفضل بيانات GPS من السائقين.",
       f2Title: "أوقات وصول دقيقة", f2Desc: "احصل على تقديرات وصول فورية مبنية على بيانات GPS الحية للسائقين.",
       f3Title: "الخطوط والمحطات", f3Desc: "اطّلع على كامل مسارات الحافلات والمحطات والاتجاهات لجميع الخطوط المتاحة.",
-      f4Title: "تنبيهات الخدمة", f4Desc: "استقبل إشعارات حول التأخيرات أو الاضطرابات التي يبلّغ عنها السائقون.",
-      f5Title: "وصول بلا إنترنت", f5Desc: "احفظ خطوطك المفضلة وتصفحها دون اتصال بالإنترنت.",
+      f4Title: "تنبيهات الخدمة", f4Desc: "إضرابات، تحويلات، محطات منقولة: ينشر فريق مسار التنبيهات على الخطوط والمحطات المعنية.",
+      f5Title: "وصول بلا إنترنت", f5Desc: "تُحفظ الخطوط والمحطات والمسارات على هاتفك وتبقى متاحة دون اتصال.",
       f6Title: "واجهة ثلاثية اللغات", f6Desc: "متوفر بالكامل بالعربية والفرنسية والإنجليزية لجميع المستخدمين الجزائريين.",
-      citiesTitle: "متوفر في كبرى مدن الجزائر",
-      citiesSubtitle: "ويتوسع إلى مزيد من المدن بفضل مجتمع سائقي مسار.",
+      citiesTitle: "متوفر في الشريعة (تبسة)",
+      citiesSubtitle: "تنضم مدن أخرى كلما انضم سائقون إلى مسار.",
       privacyBadge: "حماية كاملة للخصوصية",
       privacyTitle1: "خصوصيتك،", privacyTitle2: "أولويتنا",
-      privacyDesc: "مسار لا يجمع أي بيانات شخصية عن المسافرين. لا يُطلب إذن تحديد الموقع. يُستخدم فقط موقع GPS الذي يشاركه السائقون طوعًا.",
-      privacyPoints: ["لا تتبع للمسافرين", "لا بيانات شخصية مجمّعة", "بيانات GPS من السائقين المتطوعين فقط", "لا عمليات في الخلفية — توفير للبطارية", "مصدر البيانات شفاف وموضح بوضوح"],
+      privacyDesc: "بلا حساب ولا شيء يعرّف بك. يُستخدم موقعك على هاتفك لإيجاد المحطات القريبة؛ ولحساب رحلة يُرسل إلى مسار لهذا الغرض فقط ولا يُحفظ.",
+      privacyPoints: ["بلا حساب ولا معرّف شخصي", "الموقع للمحطات القريبة والرحلات فقط، ولا يُحفظ أبدًا", "مشاركة الحافلة التي تركبها اختيارية ودون كشف الهوية", "بلاغات مجهولة الهوية", "مواقع الحافلات مشاركة طوعًا"],
       privacyLink: "اقرأ سياسة الخصوصية",
       privacyCards: [
-        { e: "🔒", t: "صفر جمع", d: "لا بيانات مسافرين" },
-        { e: "📡", t: "مجتمعي", d: "بيانات السائقين المتطوعين" },
-        { e: "🔋", t: "موفّر للبطارية", d: "لا عمليات خلفية" },
-        { e: "📴", t: "بلا إنترنت", d: "خطوط محفوظة متاحة" }
+        { e: "🔒", t: "بلا حساب", d: "لا شيء يعرّف بك" },
+        { e: "📡", t: "مجتمعي", d: "سائقون وركاب متطوعون" },
+        { e: "🗑️", t: "لا شيء يُحفظ", d: "المواقع لا تُخزَّن" },
+        { e: "📴", t: "دون اتصال", d: "خطوط ومحطات محفوظة" }
       ],
       disclaimerTitle: "تطبيق مستقل",
-      disclaimerText: "مسار تطبيق مجتمعي مستقل. لا يتبع أي جهة حكومية جزائرية أو سلطة بلدية أو مشغّل نقل عام، ولا يحمل موافقتها. بيانات مواقع الحافلات مقدَّمة حصريًا من السائقين المشاركين عبر تطبيق Massar Driver.",
+      disclaimerText: "مسار تطبيق مجتمعي مستقل. لا يتبع أي جهة حكومية جزائرية أو سلطة بلدية أو مشغّل نقل عام، ولا يحمل موافقتها. يشارك مواقع الحافلات طوعًا السائقون عبر تطبيق Massar Driver، أو ركاب على متنها يختارون ذلك.",
       ctaTitle: "وداعًا للانتظار الطويل في المحطات",
       ctaDesc: "حمّل مسار مجانًا وابدأ تتبع حافلاتك في الوقت الفعلي اليوم.",
-      ctaTrust: "مجاني · بلا إعلانات مزعجة · لا بيانات شخصية مجمّعة",
+      ctaTrust: "مجاني · بلا حساب · بالعربية والفرنسية والإنجليزية",
       footerDesc: "تتبع مجتمعي للحافلات في الوقت الفعلي بالجزائر.",
       footerLinks: "روابط", footerContact: "تواصل معنا",
       footerSite: "الموقع الإلكتروني", footerPrivacy: "سياسة الخصوصية",
-      footerDataSource: "مصدر البيانات", footerPlay: "Google Play",
+      footerDataSource: "كيف يعمل", footerPlay: "Google Play",
       footerDisclaimer: "تطبيق مستقل غير تابع لأي جهة حكومية جزائرية.",
       eta: "وصول خلال", etaMin: "3 دقائق",
       nearby: "الخطوط القريبة",
-      bus21dest: "حسين داي ← وسط الجزائر", bus36dest: "باش جراح ← ساحة الشهداء"
+      bus21dest: "السوق الأبيض ← الجرف", bus36dest: "طريق تبسة ← المحطة البرية"
     }
   };
 
